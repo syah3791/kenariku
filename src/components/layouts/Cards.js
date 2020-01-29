@@ -28,7 +28,7 @@ export default class Cards extends Component {
           <p>Betina</p>
           <p>Suara Melengking</p>
           <p>
-            <Link to="/detail" classNameName="card-link">
+            <Link to="/detail" className="card-link">
               <button type="button" className="btn btn-warning">
                 See More
               </button>

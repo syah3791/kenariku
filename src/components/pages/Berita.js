@@ -18,7 +18,28 @@ const Container = styled.nav`
     text-align: end;
   }
 `;
-export default class Report extends Component {
+export default class Berita extends Component {
+  state = {
+    user: "",
+    judul: "",
+    deskripsi: "",
+    foto: ""
+  };
+  onChange({ target }) {
+    this.setState({
+      [target.name]: target.value
+    });
+  }
+  onSubmit(e) {
+    e.preventDefault();
+
+    const postData = {
+      user: this.state.user,
+      judul: this.state.judul,
+      deskripsi: this.state.deskripsi,
+      foto: this.state.foto
+    };
+  }
   render() {
     return (
       <Container>
@@ -74,18 +95,15 @@ export default class Report extends Component {
                           <input type="name" className="form-control"></input>
                         </div>
                         <div className="form-group col-md-6">
-                          <label for="inputType">Pakan</label>
-
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="pakan"
-                          ></input>
+                          <label for="inputType">Judul</label>
+                          <input type="name" className="form-control"></input>
                         </div>
                       </div>
 
                       <div className="form-group">
-                        <label for="exampleFormControlTextarea1">Log</label>
+                        <label for="exampleFormControlTextarea1">
+                          Deskripsi
+                        </label>
                         <textarea
                           className="form-control"
                           id="exampleFormControlTextarea1"
@@ -93,32 +111,6 @@ export default class Report extends Component {
                         ></textarea>
                       </div>
 
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label for="inputCity">DNA</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputCity"
-                          ></input>
-                        </div>
-                        <div className="form-group col-md-4">
-                          <label for="inputState">Jenis</label>
-                          <select id="inputState" className="form-control">
-                            <option selected>Choose</option>
-                            <option>Jantan</option>
-                            <option>Betina</option>
-                          </select>
-                        </div>
-                        <div className="form-group col-md-2">
-                          <label for="inputUmur">Umur (Bulan)</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputZip"
-                          ></input>
-                        </div>
-                      </div>
                       <div className="form-group">
                         <div class="custom-file">
                           <input
@@ -162,55 +154,6 @@ export default class Report extends Component {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div>
-          <div className="container">
-            <div className="input-group ">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Cari burung..."
-                aria-label=""
-                aria-describedby="basic-addon2"
-              ></input>
-              <div className="input-group-append">
-                <button className="btn btn-outline-secondary" type="button">
-                  Search
-                </button>
-              </div>
-            </div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Tanggal</th>
-                  <th scope="col">Jam</th>
-                  <th scope="col">Pakan</th>
-                  <th scope="col">Log</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">20 Januari 2019</th>
-                  <td>10.00</td>
-                  <td>
-                    -Kroto <br></br>
-                    -Bijian Mix<br></br>
-                    -Buah Apel<br></br>
-                  </td>
-                  <td>
-                    Pemberian Makan<br></br>
-                    pengecekan kandang
-                  </td>
-                  <td>
-                    Normal<br></br>
-                    Tidak Ada Penyakit
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </Container>

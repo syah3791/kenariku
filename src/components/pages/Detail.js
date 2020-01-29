@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import { Carousel } from "react-responsive-carousel";
 
 const Container = styled.nav`
   max-width: 100%;
@@ -29,6 +30,7 @@ export default class Detail extends Component {
         <div classNameName="wrapper">
           <div className="card mb-10">
             <div className="row no-gutters">
+           
               <div className="col-md-6">
                 <img
                   className="rounded-circle"

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
+import { registerburung } from "../utils/Services";
 
 const Container = styled.nav`
   .jumbotron {
@@ -18,7 +19,43 @@ const Container = styled.nav`
   }
 `;
 export default class FarmManagement extends Component {
+  state = {
+    name: "",
+    deskripsi: "",
+    jenis: "",
+    warna: "",
+    jenis_kelamin: "",
+    umur: ""
+  };
+  onChange({ target }) {
+    this.setState({
+      [target.name]: target.value
+    });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const burungData = {
+      name: this.state.name,
+      deskripsi: this.state.deskripsi,
+      jenis: this.state.jenis,
+      warna: this.state.warna,
+      jenis_kelamin: this.state.jenis_kelamin,
+      umur: this.state.umur
+    };
+
+    registerburung(burungData);
+  }
+
   render() {
+    // Select options for status
+    // const optionGender = [
+    //   { label: "* Select Gender", value: 0 },
+    //   { label: "jantan", value: "jantan" },
+    //   { label: "betina", value: "betina" }
+    // ];
+
     return (
       <Container>
         <div className="jumbotron jumbotron-fluid">
@@ -37,121 +74,148 @@ export default class FarmManagement extends Component {
               Register Burung
             </button>
 
-            <div
-              className="modal fade bd-example-modal-lg"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="myLargeModalLabel"
-              aria-hidden="true"
-            >
-              <div className="modal-dialog modal-lg" role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">
-                      Register Burung
-                    </h5>
-                    <button
-                      type="button"
-                      className="close"
-                      data-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div className="modal-body">
-                    <form>
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label for="inputName">Nama</label>
-                          <input type="name" className="form-control"></input>
+            <form onClick={e => this.onSubmit(e)}>
+              <div
+                className="modal fade bd-example-modal-lg"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="myLargeModalLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-lg" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        Register Burung
+                      </h5>
+                      <button
+                        type="button"
+                        className="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <form>
+                        <div className="form-row">
+                          <div className="form-group col-md-6">
+                            <label for="inputName">Nama</label>
+                            <input
+                              type="text"
+                              name="name"
+                              className="form-control"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.name}
+                            ></input>
+                          </div>
+                          <div className="form-group col-md-6">
+                            <label for="inputType">Jenis</label>
+                            <input
+                              type="text"
+                              name="jenis"
+                              className="form-control"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.jenis}
+                            ></input>
+                          </div>
                         </div>
-                        <div className="form-group col-md-6">
-                          <label for="inputType">Type</label>
-                          <input type="name" className="form-control"></input>
-                        </div>
-                      </div>
 
-                      <div className="form-group">
-                        <label for="exampleFormControlTextarea1">
-                          Deskripsi
-                        </label>
-                        <textarea
-                          className="form-control"
-                          id="exampleFormControlTextarea1"
-                          rows="3"
-                        ></textarea>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label for="inputCity">DNA</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputCity"
-                          ></input>
-                        </div>
-                        <div className="form-group col-md-4">
-                          <label for="inputState">Jenis</label>
-                          <select id="inputState" className="form-control">
-                            <option selected>Choose</option>
-                            <option>Jantan</option>
-                            <option>Betina</option>
-                          </select>
-                        </div>
-                        <div className="form-group col-md-2">
-                          <label for="inputUmur">Umur (Bulan)</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputZip"
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <div class="custom-file">
-                          <input
-                            type="file"
-                            class="custom-file-input"
-                            id="inputGroupFile02"
-                          ></input>
-                          <label
-                            class="custom-file-label"
-                            for="inputGroupFile02"
-                            aria-describedby="inputGroupFileAddon02"
-                          >
-                            Choose file
+                        <div className="form-group">
+                          <label for="exampleFormControlTextarea1">
+                            Deskripsi
                           </label>
+                          <textarea
+                            className="form-control"
+                            id="exampleFormControlTextarea1"
+                            rows="3"
+                            name="deskripsi"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.deskripsi}
+                          ></textarea>
                         </div>
-                        <div class="input-group-append">
-                          <br></br>
-                          <span
-                            class="input-group-text"
-                            id="inputGroupFileAddon02"
-                          >
-                            Upload
-                          </span>
-                        </div>
-                      </div>
 
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-dismiss="modal"
-                        >
-                          Close
-                        </button>
-                        <button type="button" className="btn btn-success">
-                          Update
-                        </button>
-                      </div>
-                    </form>
+                        <div className="form-row">
+                          <div className="form-group col-md-6">
+                            <label for="inputCity">Warna</label>
+                            <input
+                              type="text"
+                              name="warna"
+                              className="form-control"
+                              id="inputCity"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.warna}
+                            ></input>
+                          </div>
+                          <div className="form-group col-md-4">
+                            <label for="inputCity">Jenis Kelamin</label>
+                            <input
+                              type="text"
+                              name="jenis_kelamin"
+                              className="form-control"
+                              id="inputCity"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.jenis_kelamin}
+                            ></input>
+                          </div>
+
+                          <div className="form-group col-md-2">
+                            <label for="inputUmur">Umur (Bulan)</label>
+                            <input
+                              name="umur"
+                              type="text"
+                              className="form-control"
+                              id="inputZip"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.umur}
+                            ></input>
+                          </div>
+                        </div>
+                        {/* <div className="form-group">
+                          <div class="custom-file">
+                            <input
+                              type="file"
+                              class="custom-file-input"
+                              id="inputGroupFile02"
+                            ></input>
+                            <label
+                              class="custom-file-label"
+                              for="inputGroupFile02"
+                              aria-describedby="inputGroupFileAddon02"
+                            >
+                              Choose file
+                            </label>{" "}
+                          </div>{" "}
+                          <div class="input-group-append">
+                            <br></br>{" "}
+                            <span
+                              class="input-group-text"
+                              id="inputGroupFileAddon02"
+                            >
+                              Upload
+                            </span>
+                          </div>
+                        </div> */}
+
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-dismiss="modal"
+                          >
+                            Close
+                          </button>
+                          <button type="submit" className="btn btn-success">
+                            Tambahkan
+                          </button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
         <div>
@@ -172,10 +236,9 @@ export default class FarmManagement extends Component {
                 </button>
               </div>
             </div>
+
+            {/* Table Bird */}
             <table className="table ">
-              <thead>
-                <tr></tr>
-              </thead>
               <tbody>
                 <tr>
                   <td>
@@ -262,11 +325,9 @@ export default class FarmManagement extends Component {
                                   <select
                                     id="inputState"
                                     className="form-control"
-                                  >
-                                    <option selected>Choose</option>
-                                    <option>Jantan</option>
-                                    <option>Betina</option>
-                                  </select>
+                                    value={this.state.jenis_kelamin}
+                                    onChange={e => this.onChange(e)}
+                                  ></select>
                                 </div>
                                 <div className="form-group col-md-2">
                                   <label for="inputUmur">Umur (Bulan)</label>
