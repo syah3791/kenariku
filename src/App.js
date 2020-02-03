@@ -14,7 +14,7 @@ import LihatBurung from "./components/pages/LihatBurung";
 import Report from "./components/pages/Report";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
-import Berita from "./components/pages/Berita";
+import LaporanKeuangan from "./components/pages/LaporanKeuangan";
 
 // utils
 import setAuthToken from "./components/utils/setAuthToken";
@@ -50,7 +50,7 @@ class App extends React.Component {
         <Router>
           <Navbar />
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path="/" component={Login} />
             <Route exact path="/Home" component={Home} />
             <Route exact path="/detail" component={Detail} />
             <Route exact path="/farmmanagement" component={FarmManagement} />
@@ -59,7 +59,7 @@ class App extends React.Component {
             <Route exact path="/Report" component={Report} />
             <Route exact path="/Login" component={Login} />
             <Route exact path="/Register" component={Register} />
-            <Route exact path="/Berita" component={Berita} />
+            <Route exact path="/LaporanKeuangan" component={LaporanKeuangan} />
           </Switch>
         </Router>
       </MyApp>

@@ -71,10 +71,10 @@ export default class Report extends Component {
                       <div className="form-row">
                         <div className="form-group col-md-6">
                           <label for="inputName">Nama</label>
-                          <input type="name" className="form-control"></input>
+                          <input type="date" className="form-control"></input>
                         </div>
                         <div className="form-group col-md-6">
-                          <label for="inputType">Pakan</label>
+                          <label for="inputType">Jam</label>
 
                           <input
                             type="text"
@@ -95,7 +95,7 @@ export default class Report extends Component {
 
                       <div className="form-row">
                         <div className="form-group col-md-6">
-                          <label for="inputCity">DNA</label>
+                          <label for="inputCity">Pakan</label>
                           <input
                             type="text"
                             className="form-control"
@@ -111,37 +111,12 @@ export default class Report extends Component {
                           </select>
                         </div>
                         <div className="form-group col-md-2">
-                          <label for="inputUmur">Umur (Bulan)</label>
+                          <label for="inputUmur">Status</label>
                           <input
                             type="text"
                             className="form-control"
                             id="inputZip"
                           ></input>
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <div class="custom-file">
-                          <input
-                            type="file"
-                            class="custom-file-input"
-                            id="inputGroupFile02"
-                          ></input>
-                          <label
-                            class="custom-file-label"
-                            for="inputGroupFile02"
-                            aria-describedby="inputGroupFileAddon02"
-                          >
-                            Choose file
-                          </label>
-                        </div>
-                        <div class="input-group-append">
-                          <br></br>
-                          <span
-                            class="input-group-text"
-                            id="inputGroupFileAddon02"
-                          >
-                            Upload
-                          </span>
                         </div>
                       </div>
 

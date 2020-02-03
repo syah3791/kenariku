@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const Container = styled.nav`
   max-width: 100%;
@@ -30,15 +31,18 @@ export default class Detail extends Component {
         <div classNameName="wrapper">
           <div className="card mb-10">
             <div className="row no-gutters">
-           
-              <div className="col-md-6">
-                <img
-                  className="rounded-circle"
-                  src="https://omkicau.com/wp-content/uploads/2013/04/american-singer-canary.jpg?w=300"
-                  alt="Generic placeholder image"
-                  width="450"
-                  height="450"
-                ></img>
+              <div style={{ marginLeft: 50 }} className="col-md-5">
+                <Carousel showStatus={false} width="350px">
+                  <div>
+                    <img src="https://omkicau.com/wp-content/uploads/2013/04/american-singer-canary.jpg?w=300" />
+                  </div>
+                  <div>
+                    <img src="https://omkicau.com/wp-content/uploads/2013/04/american-singer-canary.jpg?w=300" />
+                  </div>
+                  <div>
+                    <img src="https://omkicau.com/wp-content/uploads/2013/04/american-singer-canary.jpg?w=300" />
+                  </div>
+                </Carousel>
               </div>
               <div className="col-md-5">
                 <div className="card-body">

@@ -1,9 +1,17 @@
 import React, { Component } from "react";
+
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import GaleryCards from "../layouts/GaleryCards";
 import { Howl } from "howler";
-const Container = styled.nav`
+import {
+  Container,
+  Button,
+  Link,
+  lightColors,
+  darkColors
+} from "react-floating-action-button";
+const Contaner = styled.nav`
   padding: 0;
 
   max-width: 100%;
@@ -34,7 +42,7 @@ export default class Galery extends Component {
   };
   render() {
     return (
-      <Container>
+      <Contaner>
         <div
           id="carouselExampleCaptions"
           class="carousel slide"
@@ -220,9 +228,34 @@ export default class Galery extends Component {
                 />
               </div>
             </div>
+            <Container>
+              <Link
+                href="#"
+                styles={{
+                  backgroundColor: "#007BFF",
+                  color: lightColors.white
+                }}
+                tooltip="Add Album"
+                icon="fa fa-eye"
+                data-toggle="modal"
+                data-target=".bd-example-modal-lg"
+                className="fab-item btn btn-link btn-lg text-white"
+              ></Link>
+
+              <Button
+                styles={{
+                  backgroundColor: "#007BFF",
+                  color: lightColors.white
+                }}
+                tooltip=""
+                icon="fa fa-plus"
+                rotate={true}
+                // onClick={() => alert("Tambahkan Album")}
+              />
+            </Container>
           </div>
         </div>
-      </Container>
+      </Contaner>
     );
   }
 }

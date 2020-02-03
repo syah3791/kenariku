@@ -5,16 +5,31 @@ import { loginuser } from "../utils/Services";
 import styled from "styled-components";
 
 const Container = styled.nav`
-  margin: auto;
+  min-height: 100vh;
+  overflow-y: hidden;
+  .title {
+    margin-top: 100px;
+    text-align: center;
+    background-color: #007bff;
+    padding: 10px;
 
-  background-size: cover;
-  .jumbotron {
-    background-image: url("https://www.maroubrasynagogue.org.au/wp-content/uploads/2016/04/my-account-banner.jpg");
-    background-size: cover;
+    color: white;
+
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
   }
-  .Wrapper {
-    justify-content: center;
-    margin: 100px;
+  .cover {
+    padding: 1rem 2rem;
+    height: 330px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+  }
+  .bigCover {
+    margin: auto;
+    width: 35%;
+    box-shadow: 5px 0px 18px #888888;
+    size: 1000vh;
+    border-radius: 15px;
   }
 `;
 
@@ -46,19 +61,11 @@ class Login extends Component {
   render() {
     return (
       <Container>
-        <div className="jumbotron jumbotron-fluid">
-          <div className="container">
-            <h1 style={{ color: "white" }} className="display-4">
-              Login
-            </h1>
-            <p style={{ color: "white" }} className="lead">
-              Login Di gunakan untuk mendaftarkan diri untuk bisa menjadi user
-              di dalam sistem informasi
-            </p>
+        <div className="bigCover">
+          <div className="title">
+            <h4>Login</h4>
           </div>
-        </div>
-        <div className="Wrapper">
-          <div>
+          <div className="cover">
             <form onSubmit={e => this.onSubmit(e)}>
               <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
@@ -83,9 +90,21 @@ class Login extends Component {
                   value={this.state.password}
                 />
               </div>
-              <button type="submit" class="btn btn-primary">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style={{ width: "100%" }}
+              >
                 Login
               </button>
+              <p style={{ textAlign: "center", marginTop: 50 }}>
+                Belum Daftar ?{" "}
+                <span>
+                  <Link to="/Register" className="card-link">
+                    <a className="GoesTo">Daftar Disini</a>
+                  </Link>
+                </span>
+              </p>
             </form>
           </div>
         </div>

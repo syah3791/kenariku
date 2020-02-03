@@ -29,6 +29,11 @@ export default class Navbar extends React.Component {
           </Link>
           <ul className="navbar-nav ml-auto mt-10 mt-lg-0">
             <li className="nav-item">
+              <Link to="/LaporanKeuangan" className="card-link">
+                <a className="nav-link">Finance</a>
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link to="/Home" className="card-link">
                 <a className="nav-link">Home</a>
               </Link>
@@ -50,8 +55,8 @@ export default class Navbar extends React.Component {
             </li>
 
             <li className="nav-item">
-              <Link to="/Register" className="card-link">
-                <a className="nav-link">Register</a>
+              <Link to="/Login" className="card-link">
+                <a className="nav-link">Login</a>
               </Link>
             </li>
             {/* <li className="nav-item">
