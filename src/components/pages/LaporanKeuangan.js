@@ -73,6 +73,14 @@ export default class LaporanKeuangan extends Component {
                 <td>ID 001</td>
                 <td>IDR 250.000,00</td>
                 <td>Paid</td>
+                <td>
+                  <Link to="/lihat" classNameName="card-link">
+                    <button type="button" className="btn btn-primary">
+                      <i class="fa fa-edit"></i>
+                      Detail
+                    </button>
+                  </Link>
+                </td>
               </tr>
             </tbody>
           </table>

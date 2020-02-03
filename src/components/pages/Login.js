@@ -1,8 +1,14 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
-import { loginuser } from "../utils/Services";
+// import { loginuser } from "../utils/Services";
+import { loginuser } from "../../actions/authActions";
 
 import styled from "styled-components";
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
 
 const Container = styled.nav`
   min-height: 100vh;
@@ -38,18 +44,15 @@ class Login extends Component {
     email: "",
     password: ""
   };
+
   onSubmit(e) {
     e.preventDefault();
-    console.log("====================================");
-    console.log("masuk");
-    console.log("====================================");
-
     const userData = {
       email: this.state.email,
       password: this.state.password
     };
 
-    loginuser(userData, this.props.history);
+    this.props.loginuser(userData, this.props.history);
   }
 
   onChange({ target }) {
@@ -113,4 +116,4 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+export default connect(mapStateToProps, { loginuser })(withRouter(Login));

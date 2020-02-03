@@ -1,7 +1,8 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
-import { registerusers } from "../utils/Services";
-
+// import { registerusers } from "../utils/Services";
+import { registerusers } from "../../actions/authActions";
 import styled from "styled-components";
 
 const Container = styled.nav`
@@ -44,7 +45,7 @@ class Register extends Component {
   onSubmit(e) {
     e.preventDefault();
     console.log("====================================");
-    console.log("masuk");
+    console.log("register berhasil");
     console.log("====================================");
 
     const userData = {
@@ -54,7 +55,7 @@ class Register extends Component {
       password: this.state.password
     };
 
-    registerusers(userData, this.props.history);
+    this.props.registerusers(userData, this.props.history);
   }
 
   onChange({ target }) {
@@ -134,4 +135,4 @@ class Register extends Component {
   }
 }
 
-export default withRouter(Register);
+export default connect(null, { registerusers })(withRouter(Register));

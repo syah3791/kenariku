@@ -18,7 +18,10 @@ import LaporanKeuangan from "./components/pages/LaporanKeuangan";
 
 // utils
 import setAuthToken from "./components/utils/setAuthToken";
+import { setCurrentUser, logout } from "./actions/authActions";
 import jwt_decode from "jwt-decode";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const MyApp = styled.div`
   overflow-x: hidden;
@@ -31,37 +34,43 @@ if (localStorage.jwtToken) {
   // get user data and decode token
   const decoded = jwt_decode(localStorage.jwtToken);
   // set current user and isAuthenticated
-  // store.dispatch(setCurrentUser(decoded))
+  store.dispatch(setCurrentUser(decoded));
 
   // check for expired token
   const currentTime = Date.now() / 1000;
-  // if (decoded.exp < currentTime) {
-  //   // logout user
-  //   // store.dispatch(logout())
-  //   // redirect to login
-  //   window.location.href = "/login";
-  // }
+  if (decoded.exp < currentTime) {
+    // logout user
+    store.dispatch(logout());
+    // redirect to login
+    window.location.href = "/login";
+  }
 }
 
 class App extends React.Component {
   render() {
     return (
       <MyApp>
-        <Router>
-          <Navbar />
-          <Switch>
-            <Route exact path="/" component={Login} />
-            <Route exact path="/Home" component={Home} />
-            <Route exact path="/detail" component={Detail} />
-            <Route exact path="/farmmanagement" component={FarmManagement} />
-            <Route exact path="/Galery" component={Galery} />
-            <Route exact path="/lihat" component={LihatBurung} />
-            <Route exact path="/Report" component={Report} />
-            <Route exact path="/Login" component={Login} />
-            <Route exact path="/Register" component={Register} />
-            <Route exact path="/LaporanKeuangan" component={LaporanKeuangan} />
-          </Switch>
-        </Router>
+        <Provider store={store}>
+          <Router>
+            <Navbar />
+            <Switch>
+              <Route exact path="/" component={Login} />
+              <Route exact path="/Home" component={Home} />
+              <Route exact path="/detail" component={Detail} />
+              <Route exact path="/farmmanagement" component={FarmManagement} />
+              <Route exact path="/Galery" component={Galery} />
+              <Route exact path="/lihat" component={LihatBurung} />
+              <Route exact path="/Report" component={Report} />
+
+              <Route exact path="/Register" component={Register} />
+              <Route
+                exact
+                path="/LaporanKeuangan"
+                component={LaporanKeuangan}
+              />
+            </Switch>
+          </Router>
+        </Provider>
       </MyApp>
     );
   }
