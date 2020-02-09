@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
-import { registerburung } from "../utils/Services";
+import { registerburung } from "../utils/ServicesBurung";
+import { getBurung } from "../utils/ServicesBurung";
 
 const Container = styled.nav`
   .jumbotron {
@@ -25,8 +26,38 @@ export default class FarmManagement extends Component {
     jenis: "",
     warna: "",
     jenis_kelamin: "",
-    umur: ""
+    umur: "",
+    data: [],
+    id: 0,
+    message: null,
+    intervalIsSet: false,
+    idToDelete: null,
+    idToUpdate: null,
+    objectToUpdate: null
   };
+  // when component mounts, first thing it does is fetch all existing data in our db
+  // then we incorporate a polling logic so that we can easily see if our db has
+  // changed and implement those changes into our UI
+  componentDidMount() {
+    this.getDataFromDb();
+    if (!this.state.intervalIsSet) {
+      let interval = setInterval(this.getDataFromDb, 1000);
+      this.setState({ intervalIsSet: interval });
+    }
+  }
+  componentWillUnmount() {
+    if (this.state.intervalIsSet) {
+      clearInterval(this.state.intervalIsSet);
+      this.setState({ intervalIsSet: null });
+    }
+  }
+
+  getDataFromDb = () => {
+    fetch('http://localhost:5000/api/burung/getburung')
+      .then((data) => data.json())
+      .then((res) => this.setState({ data: res}));
+  };
+
   onChange({ target }) {
     this.setState({
       [target.name]: target.value
@@ -55,7 +86,7 @@ export default class FarmManagement extends Component {
     //   { label: "jantan", value: "jantan" },
     //   { label: "betina", value: "betina" }
     // ];
-
+    const { data } = this.state;
     return (
       <Container>
         <div className="jumbotron jumbotron-fluid">
@@ -73,6 +104,8 @@ export default class FarmManagement extends Component {
             >
               Register Burung
             </button>
+
+        
 
             <form onClick={e => this.onSubmit(e)}>
               <div
@@ -240,6 +273,10 @@ export default class FarmManagement extends Component {
             {/* Table Bird */}
             <table className="table ">
               <tbody>
+              {data.length <= 0
+            ? 'NO DB ENTRIES YET'
+            : data.map((dat) => (
+              
                 <tr>
                   <td>
                     <img
@@ -248,7 +285,11 @@ export default class FarmManagement extends Component {
                       height="50px"
                     ></img>
                   </td>
-                  <td>ID 001</td>
+                  <td>{dat.name}</td>
+                  <td>{dat.jenis}</td>
+                  <td>{dat.warna}</td>
+                  <td>{dat.umur}</td>
+                  <td>{dat.jenis_kelamin}</td>
                   <td className="action">
                     <button
                       type="button"
@@ -452,6 +493,7 @@ export default class FarmManagement extends Component {
                   </td>
                   <td></td>
                 </tr>
+                ))}
               </tbody>
             </table>
           </div>
