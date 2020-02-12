@@ -28,10 +28,13 @@ export default class FarmManagement extends Component {
     warnaUp:"",
     jenis_kelaminUp: "",
     umurUp:"",
+    hargaUp: "",
+    statusUp: "",
     jenis: "",
     warna: "",
     jenis_kelamin: "",
     umur: "",
+    harga: "",
     data: [],
     idUp:"",
     id: 0,
@@ -79,6 +82,7 @@ export default class FarmManagement extends Component {
     this.setState({
       [target.name]: target.value
     });
+    
   }
 
   searchBird({ target }) {
@@ -116,6 +120,8 @@ export default class FarmManagement extends Component {
       warna: this.state.warna,
       jenis_kelamin: this.state.jenis_kelamin,
       umur: this.state.umur,
+      harga: this.state.harga,
+      status: 0,
       image1: this.state.image1,
       image2: this.state.image2,
       image3: this.state.image3
@@ -137,6 +143,8 @@ export default class FarmManagement extends Component {
       warna: this.state.warnaUp,
       jenis_kelamin: this.state.jenis_kelaminUp,
       umur: this.state.umurUp,
+      harga: this.state.hargaUp,
+      status: this.state.statusUp,
       image1: this.state.image1Up,
       image2: this.state.image2Up,
       image3: this.state.image3Up
@@ -148,13 +156,11 @@ export default class FarmManagement extends Component {
         })
     //registerburung(burungData);
   }
-    deleteData = async (e) =>  {
-    e.preventDefault();
-
+    deleteData = async () =>  {
     await api.deleteBirdById(this.state.idUp).then(res => {
-            window.alert(`Bird deleted successfully`);
-            this.getDataFromDb();
-        })
+      window.alert(`Bird deleted successfully`);
+      this.getDataFromDb();
+    })
     //registerburung(burungData);
   }
 
@@ -180,6 +186,7 @@ export default class FarmManagement extends Component {
     //   { label: "betina", value: "betina" }
     // ];
     const { data } = this.state;
+    const stat = ["Terjual", "Stok"];
     return (
       <Container>
         <div className="jumbotron jumbotron-fluid">
@@ -263,7 +270,7 @@ export default class FarmManagement extends Component {
                         </div>
 
                         <div className="form-row">
-                          <div className="form-group col-md-6">
+                          <div className="form-group col-md-3">
                             <label for="inputCity">Warna</label>
                             <input
                               type="text"
@@ -274,27 +281,44 @@ export default class FarmManagement extends Component {
                               required
                             ></input>
                           </div>
-                          <div className="form-group col-md-4">
+                          <div className="form-group col-md-3">
                             <label for="inputCity">Jenis Kelamin</label>
-                            <input
+                            <select 
                               type="text"
                               name="jenis_kelamin"
                               className="form-control"
                               id="inputCity"
                               onChange={e => this.onChange(e)}
                               value={this.state.jenis_kelamin}
-                            ></input>
+                              >
+                              <option selected>Choose</option>
+                              <option value="Jantan">Jantan</option>
+                              <option value="Betina">Betina</option>
+                            </select>
                           </div>
 
-                          <div className="form-group col-md-2">
+                          <div className="form-group col-md-3">
                             <label for="inputUmur">Umur (Bulan)</label>
                             <input
                               name="umur"
-                              type="text"
+                              type="number"
+                              className="form-control"
+                              id="inputZip"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.umur}
+                              required
+                            ></input>
+                          </div>
+                          <div className="form-group col-md-3">
+                            <label for="inputHarga">Harga (Rupiah)</label>
+                            <input
+                              name="harga"
+                              type="number"
                               className="form-control"
                               id="inputZip"
                               onChange={e => this.onChange(e)}
                               required
+                              value={this.state.harga}
                             ></input>
                           </div>
                         </div>
@@ -360,7 +384,7 @@ export default class FarmManagement extends Component {
                           >
                             Close
                           </button>
-                          <button type="submit" className="btn btn-success" onClick={e => this.addBird(e)}>
+                          <button type="submit" data-dismiss="modal" className="btn btn-success" onClick={e => this.addBird(e)}>
                             Tambahkan
                           </button>
                         </div>
@@ -408,6 +432,8 @@ export default class FarmManagement extends Component {
                   <td>{dat.warna}</td>
                   <td>{dat.umur}</td>
                   <td>{dat.jenis_kelamin}</td>
+                  <td>{dat.harga}</td>
+                  <td>{stat[dat.status]}</td>
                   <td className="action">
                     <button
                       type="button"
@@ -422,6 +448,8 @@ export default class FarmManagement extends Component {
                         jenis_kelaminUp:dat.jenis_kelamin,
                         deskirpsiUp:dat.deskripsi,
                         idUp:dat._id,
+                        hargaUp:dat.harga,
+                        statusUp:dat.status,
                         image1Up:dat.image1,
                         image2Up:dat.image2,
                         image3Up:dat.image3,
@@ -495,7 +523,7 @@ export default class FarmManagement extends Component {
                               </div>
 
                               <div className="form-row">
-                                <div className="form-group col-md-6">
+                                <div className="form-group col-md-3">
                                   <label for="inputCity">warna</label>
                                   <input
                                     type="text"
@@ -506,25 +534,41 @@ export default class FarmManagement extends Component {
                                     value={this.state.warnaUp}
                                   ></input>
                                 </div>
-                                <div className="form-group col-md-4">
+                                <div className="form-group col-md-3">
                                   <label for="inputState">Jenis Kelamin</label>
-                                  <input
-                                    id="inputState"
+                                  <select 
+                                    type="text"
                                     name="jenis_kelaminUp"
                                     className="form-control"
+                                    id="inputState"
                                     value={this.state.jenis_kelaminUp}
                                     onChange={e => this.onChange(e)}
-                                  ></input>
+                                    >
+                                    <option selected>Choose</option>
+                                    <option value="Jantan">Jantan</option>
+                                    <option value="Betina">Betina</option>
+                                  </select>
                                 </div>
-                                <div className="form-group col-md-2">
+                                <div className="form-group col-md-3">
                                   <label for="inputUmur">Umur (Bulan)</label>
                                   <input
-                                    type="text"
+                                    type="number"
                                     name="umurUp"
                                     className="form-control"
                                     id="inputZip"
                                     onChange={e => this.onChange(e)}
                                     value={this.state.umurUp}
+                                  ></input>
+                                </div>
+                                <div className="form-group col-md-3">
+                                  <label for="inputHarga">Harga (Rupiah)</label>
+                                  <input
+                                    name="hargaUp"
+                                    type="number"
+                                    className="form-control"
+                                    id="inputZip"
+                                    onChange={e => this.onChange(e)}
+                                    value={this.state.hargaUp}
                                   ></input>
                                 </div>
                               </div>
@@ -567,6 +611,7 @@ export default class FarmManagement extends Component {
                                   type="button"
                                   className="btn btn-success"
                                   onClick={e => this.updateData(e)}
+                                  data-dismiss="modal"
                                 >
                                   Update
                                 </button>
@@ -592,6 +637,9 @@ export default class FarmManagement extends Component {
                         class="btn btn-danger"
                         data-toggle="modal"
                         data-target="#exampleModal"
+                        onClick={e => this.setState({
+                          idUp:dat._id
+                        })}
                       >
                         <i class="fa fa-trash"></i>
                       </button>
@@ -616,8 +664,7 @@ export default class FarmManagement extends Component {
                                 name="idUp"
                                 data-dismiss="modal"
                                 aria-label="Close"
-                                value={dat._id}
-                                onChange={e => this.onChange(e)}
+                                value={dat.idUp}
                               >
                                 <span aria-hidden="true">&times;</span>
                               </button>
@@ -639,7 +686,7 @@ export default class FarmManagement extends Component {
                             
                               <button type="button" 
                                 onClick={e => this.deleteData(e)}
-                               
+                                data-dismiss="modal"
                               class="btn btn-danger">
                                 Hapus
                               </button>

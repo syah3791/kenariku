@@ -45,6 +45,7 @@ export default class LihatBurung extends Component {
   }
   render() {
     const { data } = this.state;
+    const stat = ["Terjual", "Stok"];
     return (
       <Container>
         <div classNameName="wrapper">
@@ -65,7 +66,7 @@ export default class LihatBurung extends Component {
               </div>
               <div className="col-md-5">
                 <div className="card-body">
-                  <h1 className="card-title">{data.name} </h1>
+                  <h1 className="card-title">{data.name} {stat[data.status]}</h1>
 
                   <hr></hr>
                   <p className="card-text">
