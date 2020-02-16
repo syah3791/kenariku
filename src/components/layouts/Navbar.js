@@ -88,9 +88,17 @@ class Navbar extends React.Component {
                     <a className="nav-link">Finance</a>
                   </Link>
                 </li>
+                <li className="nav-item">
+                  <Link to="/Berita" className="card-link">
+                    <a className="nav-link">Berita</a>
+                  </Link>
+                </li>
 
                 <li className="nav-item">
-                  <button className="btn btn-success">
+                  <button
+                    className="btn"
+                    style={{ backgroundColor: "transparent", color: "white" }}
+                  >
                     <i
                       className="fa fa-sign-out  "
                       onClick={() => this.onClickLogout()}
@@ -101,21 +109,18 @@ class Navbar extends React.Component {
             ) : (
               <React.Fragment>
                 <li className="nav-item">
-                  <button className="btn btn-success">
+                  {/* <button
+                    className="btn"
+                    style={{ backgroundColor: "transparent", color: "white" }}
+                  >
                     <i
                       className="fa fa-sign-in  "
                       onClick={() => this.onClickLogout()}
                     ></i>
-                  </button>
+                  </button> */}
                 </li>
               </React.Fragment>
             )}
-
-            {/* <li className="nav-item">
-              <Link to="/Berita" className="card-link">
-                <a className="nav-link">Berita</a>
-              </Link>
-            </li> */}
           </ul>
         </div>
       </nav>

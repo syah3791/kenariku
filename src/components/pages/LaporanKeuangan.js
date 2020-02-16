@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
-import api from '../utils/ServicesFinance';
+import api from "../utils/ServicesFinance";
 
 const Container = styled.nav`
   .jumbotron {
@@ -23,10 +23,12 @@ export default class LaporanKeuangan extends Component {
     tanggal: "",
     idBird: "",
     pembeli: "",
+    filter: "",
     harga: "",
+    jumlah: "",
     data: [],
     file: [],
-    idUp:"",
+    idUp: "",
     id: 0,
     message: null,
     intervalIsSet: false,
@@ -34,23 +36,23 @@ export default class LaporanKeuangan extends Component {
     idToUpdate: null,
     objectToUpdate: null
   };
-componentDidMount = async () => {
-    this.setState({ isLoading: true })
+  componentDidMount = async () => {
+    this.setState({ isLoading: true });
     await api.getAllReports().then(report => {
-       console.log(report)
+      console.log(report);
       this.setState({
         file: report.data.data,
-        isLoading: false,
-      })
-    })
+        isLoading: false
+      });
+    });
     await api.getAllBirds().then(bird => {
-       console.log(bird)
+      console.log(bird);
       this.setState({
         data: bird.data.data,
-        isLoading: false,
-      })
-    })
-  }
+        isLoading: false
+      });
+    });
+  };
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
       clearInterval(this.state.intervalIsSet);
@@ -67,27 +69,27 @@ componentDidMount = async () => {
   getDataFromDb = () => {
     api.getAllBirds().then(bird => {
       this.setState({
-        data: bird.data.data,
-      })
-    })
+        data: bird.data.data
+      });
+    });
   };
 
   getReportFromDb = () => {
     api.getAllReports().then(report => {
       this.setState({
-        file: report.data.data,
-      })
-    })
+        file: report.data.data
+      });
+    });
   };
 
   searchReport({ target }) {
-  // Declare variables
-  var filter, table, tr, td, i, j, txtValue, temp;
-  filter = target.value.toUpperCase();
-  table = document.getElementById("listReports");
-  tr = table.getElementsByTagName("tr");
+    // Declare variables
+    var filter, table, tr, td, i, j, txtValue, temp, jum=0;
+    filter = target.value.toUpperCase();
+    table = document.getElementById("listJournal");
+    tr = table.getElementsByTagName("tr");
 
-  // Loop through all table rows, and hide those who don't match the search query
+    // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
       var c = 0;
       td = tr[i].getElementsByTagName("td");
@@ -100,12 +102,27 @@ componentDidMount = async () => {
           }
         }
       }
-      if (c > 0) {tr[i].style.display = "";}
-      else{tr[i].style.display = "none";}
-    } 
+      if (c > 0) {
+        tr[i].style.display = "";
+        jum+=  parseFloat(td[3].innerText);
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+    this.setState({
+        jumlah: jum,
+        filter: target.value
+      });
   }
+  print = async e => {
+    var divToPrint = document.getElementById("listJournal");
+    var newWin = window.open("");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.print();
+    newWin.close();
+  };
 
-  addReport = async (e) =>  {
+  addReport = async e => {
     e.preventDefault();
     const payload = {
       tanggal: this.state.tanggal,
@@ -117,18 +134,32 @@ componentDidMount = async () => {
     await api.insertFinance(payload).then(res => {
       window.alert(`Report inserted successfully`);
       this.getReportFromDb();
-    })
+    });
 
     await api.updateBirdById(this.state.idBird).then(res => {
-            window.alert(`Bird updated successfully`);
-            this.getDataFromDb();
-        })
+      this.getDataFromDb();
+    });
     //registerburung(burungData);
-  }
+  };
   render() {
     const { data } = this.state;
     const { file } = this.state;
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const { jumlah } = this.state;
+    const { filter } = this.state;
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
     var d = null;
     return (
       <Container>
@@ -146,6 +177,16 @@ componentDidMount = async () => {
             >
               Tambah Transaksi
             </button>
+            <span>
+              {" "}
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={e => this.print(e)}
+              >
+                Download Jurnal
+              </button>
+            </span>
             <div
               className="modal fade bd-example-modal-lg"
               tabindex="-1"
@@ -180,27 +221,27 @@ componentDidMount = async () => {
                             onChange={e => this.onChange(e)}
                             value={this.state.tanggal}
                           ></input>
-                        </div>                        
+                        </div>
                         <div className="form-group col-md-4">
-                        <label for="inputName">Burung</label>
-                        <select 
-                          type="text"
-                          name="idBird"
-                          className="form-control"
-                          id="inputState"
-                          onChange={e => this.onChange(e)}
-                          value={this.state.idBird}
-                        >
-                        <option selected>Choose</option>
-                        {data.length <= 0
-                          ? 'NO DB ENTRIES YET'
-                          : data.map((dat) => (
-                            <option value={dat._id}>{dat.name}</option>
-                        ))}
+                          <label for="inputName">Burung</label>
+                          <select
+                            type="text"
+                            name="idBird"
+                            className="form-control"
+                            id="inputState"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.idBird}
+                          >
+                            <option selected>Choose</option>
+                            {data.length <= 0
+                              ? "NO DB ENTRIES YET"
+                              : data.map(dat => (
+                                  <option value={dat._id}>{dat.name}</option>
+                                ))}
                           </select>
                         </div>
-                      </div> 
-                      <div className="form-row"> 
+                      </div>
+                      <div className="form-row">
                         <div className="form-group col-md-4">
                           <label for="inputCity">Pembeli</label>
                           <input
@@ -211,7 +252,7 @@ componentDidMount = async () => {
                             onChange={e => this.onChange(e)}
                             value={this.state.pembeli}
                           ></input>
-                        </div>        
+                        </div>
                         <div className="form-group col-md-4">
                           <label for="inputCity">Harga</label>
                           <input
@@ -233,7 +274,11 @@ componentDidMount = async () => {
                         >
                           Close
                         </button>
-                        <button type="button" className="btn btn-success" onClick={e => this.addReport(e)}>
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          onClick={e => this.addReport(e)}
+                        >
                           Tambahkan
                         </button>
                       </div>
@@ -245,6 +290,32 @@ componentDidMount = async () => {
           </div>
         </div>
         <div className="container">
+          <div className="form-row" style={{ justifyContent: "space-between" }}>
+            <div className="form-group col-md-4">
+              <label for="inputState">Laporan Penjualan Perbulan</label>
+              <select
+                type="text"
+                name="filter"
+                className="form-control"
+                id="inputState"
+                onChange={e => this.searchReport(e)}
+              >
+                <option value='' selected>Plilih Bulan</option>
+                <option value="January">Januari</option>
+                <option value="February">Februari</option>
+                <option value="Maret">Maret</option>
+                <option value="April">April</option>
+                <option value="Mei">Mei</option>
+              </select>
+              <button type="button" className="btn btn-success">
+                Hitung Total Penjualan
+              </button>
+            </div>
+            <div className="form-group col-md-4">
+              <h5 style={{}}>Total Penjualan Bulan {filter} Adalah</h5>
+              <h5 style={{ fontWeight: "bold" }}>Rp.{jumlah},00</h5>
+            </div>
+          </div>
           <div className="input-group ">
             <input
               type="text"
@@ -255,14 +326,12 @@ componentDidMount = async () => {
               id="search"
               onChange={e => this.searchReport(e)}
             ></input>
-            <div className="input-group-append">
-            </div>
+            <div className="input-group-append"></div>
           </div>
-          <table class="table" id="listReports">
+          <table class="table">
             <thead>
               <tr>
                 <th scope="col">Tanggal</th>
-
                 <th scope="col">Customer</th>
                 <th scope="col">ID</th>
                 <th scope="col">Harga</th>
@@ -270,28 +339,32 @@ componentDidMount = async () => {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
+            <tbody id="listJournal">
               {file.length <= 0
-                ? 'NO DB ENTRIES YET'
-                : file.map((fil) => (    d = new Date(fil.tanggal),         
-                <tr>
-                  <th scope="row">{d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear()}</th>
-                  <td>{fil.pembeli}</td>
-                  <td>{fil.idBird}</td>
-                  <td>{fil.harga}</td>
-                  <td>Paid</td>
-                  <td>
-                    <Link to={"/lihat?"+fil.idBird} classNameName="card-link">
-                      <button type="button" className="btn btn-primary">
-                        <i class="fa fa-edit"></i>
-                        Detail
-                      </button>
-                    </Link>
-                  </td>
-                </tr>
-                ))}                
-              </tr>
+                ? "NO DB ENTRIES YET"
+                : file.map(
+                    fil => (
+                      (d = new Date(fil.tanggal)),
+                      (
+                        <tr>
+                          <td>
+                            {d.getDate() +
+                              " " +
+                              months[d.getMonth()] +
+                              " " +
+                              d.getFullYear()}
+                          </td>
+                          <td>{fil.pembeli}</td>
+                          <td>{fil.idBird}</td>
+                          <td>{fil.harga}</td>
+                          <td>{fil.status}</td>
+                          <td>
+                            <button className="btn btn-success">Detail</button>
+                          </td>
+                        </tr>
+                      )
+                    )
+                  )}
             </tbody>
           </table>
         </div>

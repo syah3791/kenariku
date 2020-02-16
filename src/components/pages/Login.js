@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
+import { PropTypes } from "prop-types";
 // import { loginuser } from "../utils/Services";
 import { loginuser } from "../../actions/authActions";
 
@@ -60,6 +61,19 @@ class Login extends Component {
       [target.name]: target.value
     });
   }
+  // logged in and error handling
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/Home");
+    }
+  }
+
+  // handle if user logged in yet try to direct to auth pages
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/Home");
+    }
+  }
 
   render() {
     return (
@@ -115,5 +129,10 @@ class Login extends Component {
     );
   }
 }
+Login.propTypes = {
+  loginuser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
 
 export default connect(mapStateToProps, { loginuser })(withRouter(Login));

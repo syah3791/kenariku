@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import api from '../utils/ServicesReport';
+import api from "../utils/ServicesReport";
 
 const Container = styled.nav`
   .jumbotron {
-    background-image: url("https://i.pinimg.com/originals/6b/20/16/6b201623685e7093fe7df8970b1d26b5.jpg");
+    background-image: url("https://www.lockpath.com/wp-content/uploads/2018/01/iStock-613679762.jpg");
     background-size: cover;
   }
   .table {
@@ -13,7 +13,6 @@ const Container = styled.nav`
     width: 100%;
     margin: 0px auto;
     float: none;
-    text-align: center;
   }
   .action {
     text-align: end;
@@ -37,7 +36,7 @@ export default class Report extends Component {
     statusUp: "",
     data: [],
     file: [],
-    idUp:"",
+    idUp: "",
     id: 0,
     image1: "",
     image1Up: "",
@@ -51,23 +50,23 @@ export default class Report extends Component {
     idToUpdate: null,
     objectToUpdate: null
   };
-componentDidMount = async () => {
-    this.setState({ isLoading: true })
+  componentDidMount = async () => {
+    this.setState({ isLoading: true });
     await api.getAllReports().then(report => {
-       console.log(report)
+      console.log(report);
       this.setState({
         file: report.data.data,
-        isLoading: false,
-      })
-    })
+        isLoading: false
+      });
+    });
     await api.getAllBirds().then(bird => {
-       console.log(bird)
+      console.log(bird);
       this.setState({
         data: bird.data.data,
-        isLoading: false,
-      })
-    })
-  }
+        isLoading: false
+      });
+    });
+  };
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
       clearInterval(this.state.intervalIsSet);
@@ -84,27 +83,27 @@ componentDidMount = async () => {
   getDataFromDb = () => {
     api.getAllBirds().then(bird => {
       this.setState({
-        data: bird.data.data,
-      })
-    })
+        data: bird.data.data
+      });
+    });
   };
 
   getReportFromDb = () => {
     api.getAllReports().then(report => {
       this.setState({
-        file: report.data.data,
-      })
-    })
+        file: report.data.data
+      });
+    });
   };
 
   searchReport({ target }) {
-  // Declare variables
-  var filter, table, tr, td, i, j, txtValue, temp;
-  filter = target.value.toUpperCase();
-  table = document.getElementById("listReports");
-  tr = table.getElementsByTagName("tr");
+    // Declare variables
+    var filter, table, tr, td, i, j, txtValue, temp;
+    filter = target.value.toUpperCase();
+    table = document.getElementById("listReports");
+    tr = table.getElementsByTagName("tr");
 
-  // Loop through all table rows, and hide those who don't match the search query
+    // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
       var c = 0;
       td = tr[i].getElementsByTagName("td");
@@ -117,20 +116,23 @@ componentDidMount = async () => {
           }
         }
       }
-      if (c > 0) {tr[i].style.display = "";}
-      else{tr[i].style.display = "none";}
-    } 
+      if (c > 0) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
   }
 
-  print = async (e) => {
-        var divToPrint=document.getElementById("listReports");
-        var newWin= window.open("");
-        newWin.document.write(divToPrint.outerHTML);
-        newWin.print();
-        newWin.close();
-    }
+  print = async e => {
+    var divToPrint = document.getElementById("listReports");
+    var newWin = window.open("");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.print();
+    newWin.close();
+  };
 
-  addReport = async (e) =>  {
+  addReport = async e => {
     e.preventDefault();
     window.alert(this.state.tanggal);
     const payload = {
@@ -145,10 +147,10 @@ componentDidMount = async () => {
     await api.insertReport(payload).then(res => {
       window.alert(`Report inserted successfully`);
       this.getReportFromDb();
-    })
+    });
     //registerburung(burungData);
-  }
-  updateData = async (e) =>  {
+  };
+  updateData = async e => {
     e.preventDefault();
 
     const payload = {
@@ -160,26 +162,38 @@ componentDidMount = async () => {
       status: this.state.statusUp
     };
 
-    await api.updateReportById(this.state.idUp,payload).then(res => {
-            window.alert(`Report updated successfully`);
-            this.getReportFromDb();
-        })
+    await api.updateReportById(this.state.idUp, payload).then(res => {
+      window.alert(`Report updated successfully`);
+      this.getReportFromDb();
+    });
     //registerburung(burungData);
-  }
-  deleteData = async (e) =>  {
+  };
+  deleteData = async e => {
     e.preventDefault();
-    await api.deleteBirdById(this.state.idUp).then(res => {
+    await api.deleteReportById(this.state.idUp).then(res => {
       window.alert(`Bird deleted successfully`);
       this.getReportFromDb();
-    })
-  }
+    });
+  };
 
   render() {
-    
-  const { data } = this.state;
-  const { file } = this.state;
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  var d = null;
+    const { data } = this.state;
+    const { file } = this.state;
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    var d = null;
     return (
       <Container>
         <div className="jumbotron jumbotron-fluid">
@@ -199,7 +213,11 @@ componentDidMount = async () => {
             </button>
             <span>
               {" "}
-              <button type="button" className="btn btn-primary" onClick={e => this.print(e)}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={e => this.print(e)}
+              >
                 Download Log
               </button>
             </span>
@@ -215,7 +233,7 @@ componentDidMount = async () => {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">
-                      Tambah Log
+                      Tambahkan
                     </h5>
                     <button
                       type="button"
@@ -226,25 +244,26 @@ componentDidMount = async () => {
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
+                  
                   <div className="modal-body">
                     <form>
                       <div className="form-row">
                         <div className="form-group col-md-4">
-                        <label for="inputName">Nama</label>
-                        <select 
-                          type="text"
-                          name="nama"
-                          className="form-control"
-                          id="inputState"
-                          onChange={e => this.onChange(e)}
-                          value={this.state.nama}
-                        >
-                        <option selected>Choose</option>
-                        {data.length <= 0
-                          ? 'NO DB ENTRIES YET'
-                          : data.map((dat) => (
-                            <option value={dat.name}>{dat.name}</option>
-                        ))}
+                          <label for="inputName">Nama</label>
+                          <select
+                            type="text"
+                            name="nama"
+                            className="form-control"
+                            id="inputState"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.nama}
+                          >
+                            <option selected>Choose</option>
+                            {data.length <= 0
+                              ? "NO DB ENTRIES YET"
+                              : data.map(dat => (
+                                  <option value={dat.name}>{dat.name}</option>
+                                ))}
                           </select>
                         </div>
                         <div className="form-group col-md-4">
@@ -295,19 +314,19 @@ componentDidMount = async () => {
                         </div>
                         <div className="form-group col-md-6">
                           <label for="inputUmur">Status</label>
-                          <select 
-                              type="text"
-                              name="status"
-                              className="form-control"
-                              id="inputCity"
-                              onChange={e => this.onChange(e)}
-                              value={this.state.status}
+                          <select
+                            type="text"
+                            name="status"
+                            className="form-control"
+                            id="inputCity"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.status}
                           >
-                              <option selected>Choose</option>
-                              <option value="Normal">Normal</option>
-                              <option value="Sakit">Sakit</option>
-                              <option value="Pemulihan">Pemulihan</option>
-                              <option value="Kritis">Kritis</option>
+                            <option selected>Choose</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Sakit">Sakit</option>
+                            <option value="Pemulihan">Pemulihan</option>
+                            <option value="Kritis">Kritis</option>
                           </select>
                         </div>
                       </div>
@@ -320,7 +339,11 @@ componentDidMount = async () => {
                         >
                           Close
                         </button>
-                        <button type="button" className="btn btn-success" onClick={e => this.addReport(e)}>
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          onClick={e => this.addReport(e)}
+                        >
                           Tambahkan
                         </button>
                       </div>
@@ -332,49 +355,277 @@ componentDidMount = async () => {
           </div>
         </div>
         <div>
+        
           <div className="container">
             <div className="input-group ">
               <div className="input-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Cari burung..."
-                aria-label=""
-                id="search"
-                onChange={e => this.searchReport(e)}
-                aria-describedby="basic-addon2"
-              ></input>
-            </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Cari Log"
+                  aria-label=""
+                  id="search"
+                  onChange={e => this.searchReport(e)}
+                  aria-describedby="basic-addon2"
+                ></input>
               </div>
             </div>
-            <table class="table" id="listReports">
+
+            <table class="table">
               <thead>
                 <tr>
                   <th scope="col">Nama</th>
                   <th scope="col">Tanggal</th>
                   <th scope="col">Jam</th>
-                  <th scope="col">Pakan</th>
                   <th scope="col">Log</th>
+                  <th scope="col">Pakan</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-              <tbody>
-              {file.length <= 0
-                ? 'NO DB ENTRIES YET'
-                : file.map((fil) => (    d = new Date(fil.tanggal),         
-                <tr>
-                  <th scope="row">{fil.nama}</th>
-                  <td>{d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear()}</td>
-                  <td>{fil.jam}</td>
-                  <td>{fil.log}</td>
-                  <td>{fil.pakan}</td>
-                  <td>{fil.status}</td>
-                </tr>
-                ))}
+              <tbody id="listReports">
+                {file.length <= 0
+                  ? "NO DB ENTRIES YET"
+                  : file.map(
+                      fil => (
+                        (d = new Date(fil.tanggal)),
+                        (
+                          <tr>
+                            <th scope="row">{fil.nama}</th>
+                            <td>
+                              {d.getDate() +
+                                " " +
+                                months[d.getMonth()] +
+                                " " +
+                                d.getFullYear()}
+                            </td>
+                            <td>{fil.jam}</td>
+                            <td>{fil.log}</td>
+                            <td>{fil.pakan}</td>
+                            <td>{fil.status}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-success"
+                                data-toggle="modal"
+                                data-target="#updateReport"
+                                onClick={e => this.setState({
+                                  namaUp:fil.nama,
+                                  tanggalUp:fil.tanggal,
+                                  jamUp:fil.jam,
+                                  logUp:fil.log,
+                                  pakanUp:fil.pakan,
+                                  statusUp:fil.status
+                                
+                                })}
+                              >
+                                Edit Log
+                              </button>
+                              <div
+              className="modal fade bd-example-modal-lg"
+              tabindex="-1"
+              id="updateReport"
+              role="dialog"
+              aria-labelledby="myLargeModalLabel"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog modal-lg" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">
+                      Edit Log
+                    </h5>
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <form>
+                      <div className="form-row">
+                        <div className="form-group col-md-4">
+                          <label for="inputName">Nama</label>
+                          <select
+                            type="text"
+                            name="namaUp"
+                            className="form-control"
+                            id="inputState"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.namaUp}
+                          >
+                            <option selected>Choose</option>
+                            {data.length <= 0
+                              ? "NO DB ENTRIES YET"
+                              : data.map(dat => (
+                                  <option value={dat.name}>{dat.name}</option>
+                                ))}
+                          </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label for="inputType">Tanggal</label>
+                          <input
+                            type="date"
+                            className="form-control"
+                            name="tanggalUp"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.tanggalUp}
+                          ></input>
+                        </div>
+                        <div className="form-group col-md-4">
+                          <label for="inputType">Jam</label>
+                          <input
+                            type="time"
+                            className="form-control"
+                            name="jamUp"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.jamUp}
+                          ></input>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label for="exampleFormControlTextarea1">Log</label>
+                        <textarea
+                          className="form-control"
+                          id="exampleFormControlTextarea1"
+                          rows="3"
+                          name="logUp"
+                          onChange={e => this.onChange(e)}
+                          value={this.state.logUp}
+                        ></textarea>
+                      </div>
+
+                      <div className="form-row">
+                        <div className="form-group col-md-6">
+                          <label for="inputCity">Pakan</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="inputCity"
+                            name="pakanUp"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.pakanUp}
+                          ></input>
+                        </div>
+                        <div className="form-group col-md-6">
+                          <label for="inputUmur">Status</label>
+                          <select
+                            type="text"
+                            name="statusUp"
+                            className="form-control"
+                            id="inputCity"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.statusUp}
+                          >
+                            <option selected>Choose</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Sakit">Sakit</option>
+                            <option value="Pemulihan">Pemulihan</option>
+                            <option value="Kritis">Kritis</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          onClick={e => this.updateData(e)}
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  </div>
+                </div>
+                      </div>
+
+                              <span>
+                                {"   "}
+                              <button
+                        type="button"
+                        class="btn btn-danger"
+                        data-toggle="modal"
+                        data-target="#exampleModal"
+                        onClick={e => this.setState({
+                          idUp:fil._id
+                        })}
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                      <div
+                        class="modal fade"
+                        id="exampleModal"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5
+                                class="modal-title"
+                                id="exampleModalLabel"
+                              ></h5>
+                              <button
+                                type="button"
+                                class="close"
+                                name="idUp"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                value={fil.idUp}
+                              >
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div
+                              style={{ fontWeight: "bold" }}
+                              class="modal-body"
+                            >
+                              Yakin Menghapus Data ?
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                              >
+                                Close
+                              </button>
+                            
+                              <button type="button" 
+                                onClick={e => this.deleteData(e)}
+                                data-dismiss="modal"
+                              class="btn btn-danger">
+                                Hapus
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                     </span>
+                            </td>
+                          </tr>
+                        )
+                      )
+                    )}
               </tbody>
             </table>
           </div>
+        </div>
       </Container>
     );
   }

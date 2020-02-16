@@ -14,8 +14,62 @@ const Container = styled.nav`
     margin: 0px auto;
     float: none;
   }
-  .action {
-    text-align: end;
+
+  .card-counter{
+    box-shadow: 2px 2px 10px #DADADA;
+    margin: 5px;
+    padding: 20px 10px;
+    background-color: #fff;
+    height: 100px;
+    border-radius: 5px;
+    transition: .3s linear all;
+  }
+
+  .card-counter:hover{
+    box-shadow: 4px 4px 20px #DADADA;
+    transition: .3s linear all;
+  }
+
+  .card-counter.primary{
+    background-color: #007bff;
+    color: #FFF;
+  }
+
+  .card-counter.danger{
+    background-color: #ef5350;
+    color: #FFF;
+  }  
+
+  .card-counter.success{
+    background-color: #66bb6a;
+    color: #FFF;
+  }  
+
+  .card-counter.info{
+    background-color: #26c6da;
+    color: #FFF;
+  }  
+
+  .card-counter i{
+    font-size: 5em;
+    opacity: 0.2;
+  }
+
+  .card-counter .count-numbers{
+    position: absolute;
+    right: 35px;
+    top: 20px;
+    font-size: 32px;
+    display: block;
+  }
+
+  .card-counter .count-name{
+    position: absolute;
+    right: 35px;
+    top: 65px;
+    font-style: italic;
+    text-transform: capitalize;
+    opacity: 0.5;
   }
 `;
 export default class FarmManagement extends Component {
@@ -56,12 +110,19 @@ export default class FarmManagement extends Component {
   componentDidMount = async () => {
     this.setState({ isLoading: true })
      await api.getAllBirds().then(bird => {
-       console.log(bird)
       this.setState({
         data: bird.data.data,
-        isLoading: false,
       })
     })
+    var s = 0;
+    var  t = 0;
+    this.state.data.map((dat) => (
+      dat.status == 1 
+      ? s = s + 1
+      : t = t + 1
+      ));
+    document.getElementById("stock").innerHTML = s;
+    document.getElementById("jual").innerHTML = t;
   }
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
@@ -76,6 +137,15 @@ export default class FarmManagement extends Component {
         data: bird.data.data,
       })
     })
+    var s = 0;
+    var  t = 0;
+    this.state.data.map((dat) => (
+      dat.status == 1 
+      ? s = s + 1
+      : t = t + 1
+      ));
+    document.getElementById("stock").innerHTML = s;
+    document.getElementById("jual").innerHTML = t;
   };
 
   onChange({ target }) {
@@ -121,16 +191,18 @@ export default class FarmManagement extends Component {
       jenis_kelamin: this.state.jenis_kelamin,
       umur: this.state.umur,
       harga: this.state.harga,
-      status: 0,
+      status: 1,
       image1: this.state.image1,
       image2: this.state.image2,
       image3: this.state.image3
     };
-
-    await api.insertBird(payload).then(res => {
-            window.alert(`Bird inserted successfully`);
-            this.getDataFromDb();
-        })
+    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.umur&&payload.image1&&payload.image2&&payload.image3) {
+      await api.insertBird(payload).then(res => {
+        window.alert(`Bird inserted successfully`);
+        this.getDataFromDb();
+      })
+    }else window.alert(`Mohon isi form dengan lengkap`);
+    
     //registerburung(burungData);
   }
   updateData = async (e) =>  {
@@ -149,11 +221,12 @@ export default class FarmManagement extends Component {
       image2: this.state.image2Up,
       image3: this.state.image3Up
     };
-
-    await api.updateBirdById(this.state.idUp,payload).then(res => {
+    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.umur&&payload.image1&&payload.image2&&payload.image3) {
+      await api.updateBirdById(this.state.idUp,payload).then(res => {
             window.alert(`Bird updated successfully`);
             this.getDataFromDb();
         })
+    }else window.alert(`Mohon isi form dengan lengkap`);
     //registerburung(burungData);
   }
     deleteData = async () =>  {
@@ -162,6 +235,11 @@ export default class FarmManagement extends Component {
       this.getDataFromDb();
     })
     //registerburung(burungData);
+  }
+
+  preview  = async ({ target }) =>{
+    var output = document.getElementById("output"+target.id);
+    output.src = URL.createObjectURL(target.files[0]);
   }
 
   uploadImage  = async ({ target }) =>{  
@@ -179,14 +257,10 @@ export default class FarmManagement extends Component {
   }
 
   render() {
-    // Select options for status
-    // const optionGender = [
-    //   { label: "* Select Gender", value: 0 },
-    //   { label: "jantan", value: "jantan" },
-    //   { label: "betina", value: "betina" }
-    // ];
+
     const { data } = this.state;
     const stat = ["Terjual", "Stok"];
+   
     return (
       <Container>
         <div className="jumbotron jumbotron-fluid">
@@ -322,19 +396,19 @@ export default class FarmManagement extends Component {
                             ></input>
                           </div>
                         </div>
-
-
-                        <div className="form-row">
+                        <div className="form-row" style={{justifyContent:"space-between"}}>
                           <div className="form-group col-md-3">
                             <label for="inputCity">Gambar Depan</label>
-                            <input type="file" id="image1"/>
+                            <input type="file" id="image1" onChange={e => this.preview(e)}/>
+                            <img id="outputimage1" width="100px" height="100px"/>
                             <div class="form-group">
                               <button type="button" name="image1" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                             </div>
                           </div>
                           <div className="form-group col-md-3">
                             <label for="inputCity">Gambar Depan</label>
-                            <input type="file" id="image2"/>
+                            <input type="file" id="image2" onChange={e => this.preview(e)}/>
+                            <img id="outputimage2" width="100px" height="100px"/>
                             <div class="form-group">
                               <button type="button" name="image2" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                             </div>
@@ -342,39 +416,14 @@ export default class FarmManagement extends Component {
 
                           <div className="form-group col-md-3">
                             <label for="inputCity">Gambar Depan</label>
-                            <input type="file" id="image3"/>
+                            <input type="file" id="image3" onChange={e => this.preview(e)}/>
+                            <img id="outputimage3" width="100px" height="100px"/>
                             <div class="form-group">
                               <button type="button" name="image3" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                             </div>
                           </div>
                         </div>
-
-
-                        {/* <div className="form-group">
-                          <div class="custom-file">
-                            <input
-                              type="file"
-                              class="custom-file-input"
-                              id="inputGroupFile02"
-                            ></input>
-                            <label
-                              class="custom-file-label"
-                              for="inputGroupFile02"
-                              aria-describedby="inputGroupFileAddon02"
-                            >
-                              Choose file
-                            </label>{" "}
-                          </div>{" "}
-                          <div class="input-group-append">
-                            <br></br>{" "}
-                            <span
-                              class="input-group-text"
-                              id="inputGroupFileAddon02"
-                            >
-                              Upload
-                            </span>
-                          </div>
-                        </div> */}
+                    
 
                         <div className="modal-footer">
                           <button
@@ -384,7 +433,7 @@ export default class FarmManagement extends Component {
                           >
                             Close
                           </button>
-                          <button type="submit" data-dismiss="modal" className="btn btn-success" onClick={e => this.addBird(e)}>
+                          <button type="submit" className="btn btn-success" onClick={e => this.addBird(e)}>
                             Tambahkan
                           </button>
                         </div>
@@ -398,8 +447,34 @@ export default class FarmManagement extends Component {
         </div>
         <div>
           <div className="container">
+          <div class="row" style={{justifyContent:"center"}}>
+    <div class="col-md-3">
+      <div class="card-counter primary">
+        <i class="fa fa-code-fork"></i>
+        <span class="count-numbers" id="stock"></span>
+        <span class="count-name"> Burung Stock</span>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+    
+      <div class="card-counter danger">
+        <i class="fa fa-ticket"></i>
+        <span class="count-numbers" id="jual"></span>
+        <span class="count-name"> Burung Terjual</span>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card-counter success">
+        <i class="fa fa-database"></i>
+        <span class="count-numbers">{data.length}</span>
+        <span class="count-name">Jumlah Semua Burung</span>
+      </div>
+      </div>
+      </div>
             <h2>List Burung Kenari</h2>
-            <p></p>
+           
             <div className="input-group mb-3">
               <input
                 type="text"
@@ -413,8 +488,21 @@ export default class FarmManagement extends Component {
             </div>
 
             {/* Table Bird */}
-            <table className="table" id="listBirds">
-              <tbody>
+            <table className="table" >
+            <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Nama</th>
+                  <th scope="col">Jenis</th>
+                  <th scope="col">Warna</th>
+                  <th scope="col">Umur</th>
+                  <th scope="col">Jenis Kelamin</th>
+                  <th scope="col">Harga</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="listBirds">
               {data.length <= 0
             ? 'NO DB ENTRIES YET'
             : data.map((dat) => (
@@ -430,7 +518,7 @@ export default class FarmManagement extends Component {
                   <td>{dat.name}</td>
                   <td>{dat.jenis}</td>
                   <td>{dat.warna}</td>
-                  <td>{dat.umur}</td>
+                  <td>{dat.umur} bulan</td>
                   <td>{dat.jenis_kelamin}</td>
                   <td>{dat.harga}</td>
                   <td>{stat[dat.status]}</td>
@@ -572,7 +660,7 @@ export default class FarmManagement extends Component {
                                   ></input>
                                 </div>
                               </div>
-
+                            
                               <div className="form-row">
                                 <div className="form-group col-md-3">
                                   <label for="inputCity">Gambar Depan</label>
@@ -696,7 +784,7 @@ export default class FarmManagement extends Component {
                       </div>
                     </span>
                   </td>
-                  <td></td>
+                 
                 </tr>
                 ))}
               </tbody>
