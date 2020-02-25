@@ -5,7 +5,7 @@ import api from "../utils/ServicesFinance";
 
 const Container = styled.nav`
   .jumbotron {
-    background-image: url("https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-financial-management-banner-background-design-image_188731.jpg");
+    background-image: url("");
     background-size: cover;
   }
   .table {
@@ -18,7 +18,7 @@ const Container = styled.nav`
     text-align: end;
   }
 `;
-export default class LaporanKeuangan extends Component {
+export default class DetailKeuangan extends Component {
   state = {
     tanggal: "",
     idBird: "",
@@ -178,12 +178,12 @@ export default class LaporanKeuangan extends Component {
       <Container>
         <div className="jumbotron jumbotron-fluid">
           <div className="container">
-            <h1 className="display-4">Laporan Keuangan</h1>
+            <h1 className="display-4">Detail Keuangan</h1>
             <p className="lead">
-              Laporan digunakan untuk melihat laporan keuangan dan transaksi
-              burung kenari.
+              Detail Keuangan digunakan untuk melihat laporan keuangan dan
+              transaksi burung kenari.
             </p>
-            {/* <button
+            <button
               type="button"
               className="btn btn-success"
               data-toggle="modal"
@@ -212,7 +212,7 @@ export default class LaporanKeuangan extends Component {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">
-                      Tambah Log
+                      Tambah Transaksi
                     </h5>
                     <button
                       type="button"
@@ -226,7 +226,7 @@ export default class LaporanKeuangan extends Component {
                   <div className="modal-body">
                     <form>
                       <div className="form-row">
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                           <label for="inputType">Tanggal</label>
                           <input
                             type="date"
@@ -236,7 +236,7 @@ export default class LaporanKeuangan extends Component {
                             value={this.state.tanggal}
                           ></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        {/* <div className="form-group col-md-6">
                           <label for="inputName">Burung</label>
                           <select
                             type="text"
@@ -253,22 +253,24 @@ export default class LaporanKeuangan extends Component {
                                   <option value={dat._id}>{dat.name}</option>
                                 ))}
                           </select>
-                        </div>
+                        </div> */}
+                      </div>
+                      <div className="form-group">
+                        <label for="exampleFormControlTextarea1">
+                          Keterangan
+                        </label>
+                        <textarea
+                          className="form-control"
+                          id="exampleFormControlTextarea1"
+                          rows="3"
+                          name="keterangan"
+                          onChange={e => this.onChange(e)}
+                          value=""
+                        ></textarea>
                       </div>
                       <div className="form-row">
-                        <div className="form-group col-md-4">
-                          <label for="inputCity">Pembeli</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputCity"
-                            name="pembeli"
-                            onChange={e => this.onChange(e)}
-                            value={this.state.pembeli}
-                          ></input>
-                        </div>
-                        <div className="form-group col-md-4">
-                          <label for="inputCity">Harga</label>
+                        <div className="form-group col-md-6">
+                          <label for="inputCity">Nominal</label>
                           <input
                             type="number"
                             className="form-control"
@@ -277,6 +279,21 @@ export default class LaporanKeuangan extends Component {
                             onChange={e => this.onChange(e)}
                             value={this.state.harga}
                           ></input>
+                        </div>
+                        <div className="form-group col-md-6">
+                          <label for="inputCity">Jenis Laporan</label>
+                          <select
+                            type="text"
+                            name="jenisLaporan"
+                            className="form-control"
+                            id="inputCity"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.jenis}
+                          >
+                            <option selected>Choose</option>
+                            <option value="Pengeluran">Pengeluaran</option>
+                            <option value="Pemasukan">Pemasukan</option>
+                          </select>
                         </div>
                       </div>
 
@@ -300,7 +317,7 @@ export default class LaporanKeuangan extends Component {
                   </div>
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
         <div className="container">
@@ -369,10 +386,9 @@ export default class LaporanKeuangan extends Component {
             <thead>
               <tr>
                 <th scope="col">Bulan</th>
-                <th scope="col">Pendapatan</th>
-                <th scope="col">Pengeluaran</th>
-
-                <th scope="col">Action</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">Nominal</th>
+                <th scope="col">Jenis</th>
               </tr>
             </thead>
             <tbody id="listJournal">
@@ -386,14 +402,11 @@ export default class LaporanKeuangan extends Component {
                           <td>
                             {" " + months[d.getMonth()] + " " + d.getFullYear()}
                           </td>
-                          <td>500k</td>
-                          <td>150k</td>
+                          <td>Penjualan Burung</td>
+                          <td>{fil.harga}</td>
+                          <td>Pemasukan</td>
                           <td>
-                            <Link to="/DetailKeuangan">
-                              <button className="btn btn-success">
-                                Detail
-                              </button>
-                            </Link>
+                            <button className="btn btn-success">Detail</button>
                           </td>
                         </tr>
                       )

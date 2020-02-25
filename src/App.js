@@ -12,11 +12,16 @@ import Detail from "./components/pages/Detail";
 import FarmManagement from "./components/pages/FarmManagement";
 import Galery from "./components/pages/Galery";
 import LihatBurung from "./components/pages/LihatBurung";
+import LihatBurung2 from "./components/pages/LihatBurung2";
 import Report from "./components/pages/Report";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
-import Berita from "./components/pages/Berita";
+import Jadwal from "./components/pages/Jadwal";
+import Koleksi from "./components/pages/Koleksi";
 import LaporanKeuangan from "./components/pages/LaporanKeuangan";
+import DetailKeuangan from "./components/pages/DetailKeuangan";
+import Breeding from "./components/pages/Breeding";
+import DetailLog from "./components/pages/DetailLog";
 
 // utils
 import setAuthToken from "./components/utils/setAuthToken";
@@ -75,6 +80,9 @@ class App extends React.Component {
               <PrivateRoute exact path="/lihat" component={LihatBurung} />
             </Switch>
             <Switch>
+              <PrivateRoute exact path="/lihatRep" component={LihatBurung2} />
+            </Switch>
+            <Switch>
               <PrivateRoute exact path="/Report" component={Report} />
             </Switch>
             <Switch>
@@ -89,8 +97,25 @@ class App extends React.Component {
               />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/Berita" component={Berita} />
+              <PrivateRoute exact path="/Jadwal" component={Jadwal} />
               />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/Koleksi" component={Koleksi} />
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/DetailKeuangan"
+                component={DetailKeuangan}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/Breeding" component={Breeding} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/DetailLog" component={DetailLog} />
             </Switch>
           </Router>
         </Provider>

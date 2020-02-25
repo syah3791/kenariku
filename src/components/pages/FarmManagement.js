@@ -191,7 +191,6 @@ export default class FarmManagement extends Component {
       jenis_kelamin: this.state.jenis_kelamin,
       umur: this.state.umur,
       harga: this.state.harga,
-      status: 1,
       image1: this.state.image1,
       image2: this.state.image2,
       image3: this.state.image3
@@ -200,6 +199,18 @@ export default class FarmManagement extends Component {
       await api.insertBird(payload).then(res => {
         window.alert(`Bird inserted successfully`);
         this.getDataFromDb();
+        this.setState({
+          name: "",
+          deskirpsi:"",
+          jenis: "",
+          warna: "",
+          jenis_kelamin: "",
+          umur: "",
+          harga: "",
+          image1: "",
+          image2: "",
+          image3: "",
+        });
       })
     }else window.alert(`Mohon isi form dengan lengkap`);
     
@@ -308,7 +319,7 @@ export default class FarmManagement extends Component {
                       <form>
                         <div className="form-row">
                           <div className="form-group col-md-6">
-                            <label for="inputName">Nama</label>
+                            <label for="inputName"> Ring ID</label>
                             <input
                               type="text"
                               name="name"
@@ -318,16 +329,28 @@ export default class FarmManagement extends Component {
                             ></input>
                           </div>
                           <div className="form-group col-md-6">
-                            <label for="inputType">Jenis</label>
-                            <input
+                            <label for="inputCity">Jenis</label>
+                            <select 
                               type="text"
                               name="jenis"
                               className="form-control"
+                              id="inputCity"
                               onChange={e => this.onChange(e)}
-                              required
-                            ></input>
+                              value={this.state.jenis}
+                              >
+                              <option selected>Choose</option>
+                              <option value="Kenari Melayu">Kenari Melayu</option>
+                              <option value="Kenari Yorkshire">Kenari Yorkshire</option>
+                              <option value="Kenari Waterslager">Kenari Waterslager</option>
+                              <option value="Kenari Spanish Timbrado">Kenari Spanish Timbrado</option>
+                              <option value=" Kenari Border">Kenari Border</option>
+                              <option value="Kenari Gloster">Kenari Gloster</option>
+                              <option value="Kenari Melayu">Kenari Melayu</option>
+                              <option value="Kenari Norwich">Kenari Norwich</option>
+                            
+                            </select>
                           </div>
-                        </div>
+                          </div>
 
                         <div className="form-group">
                           <label for="exampleFormControlTextarea1">
@@ -492,7 +515,7 @@ export default class FarmManagement extends Component {
             <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">Nama</th>
+                  <th scope="col">Ring ID</th>
                   <th scope="col">Jenis</th>
                   <th scope="col">Warna</th>
                   <th scope="col">Umur</th>
@@ -711,7 +734,7 @@ export default class FarmManagement extends Component {
                     </div>
                     <span>
                       {" "}
-                      <Link to={"/lihat?"+dat._id} classNameName="card-link">
+                      <Link to={"/lihatRep?"+dat._id} classNameName="card-link">
                         <button type="button" className="btn btn-primary">
                           <i class="fa fa-eye"></i>
                           Lihat
