@@ -39,7 +39,8 @@ export default class DetailKeuangan extends Component {
   };
   componentDidMount = async () => {
     this.setState({ isLoading: true });
-    await api.getAllReports().then(report => {
+    var query = window.location.search.substring(1);
+    await api.getReportsByIdMonth(query).then(report => {
       console.log(report);
       this.setState({
         file: report.data.data,
@@ -153,7 +154,7 @@ export default class DetailKeuangan extends Component {
     //registerburung(burungData);
   };
   render() {
-    const stat = ["Terjual", "Stok"];
+    const status = ["Pengeluaran", "Pemasukkan"];
     const { data } = this.state;
     const { file } = this.state;
     const { jumlah } = this.state;
@@ -385,7 +386,7 @@ export default class DetailKeuangan extends Component {
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Bulan</th>
+                <th scope="col">Tanggal</th>
                 <th scope="col">Keterangan</th>
                 <th scope="col">Nominal</th>
                 <th scope="col">Jenis</th>
@@ -400,13 +401,17 @@ export default class DetailKeuangan extends Component {
                       (
                         <tr>
                           <td>
-                            {" " + months[d.getMonth()] + " " + d.getFullYear()}
+                            {fil.day +" " + months[fil.month-1] + " " + fil.year}
                           </td>
-                          <td>Penjualan Burung</td>
-                          <td>{fil.harga}</td>
-                          <td>Pemasukan</td>
+                          <td>{fil.keterangan}</td>
+                          <td>{fil.out}{fil.in}</td>
+                          <td>{status[fil.status]}</td>
                           <td>
-                            <button className="btn btn-success">Detail</button>
+                            <Link to={"/lihatTrans?" + fil._id} className="card-link">
+                              <button type="button" className="btn btn-warning">
+                                See More
+                              </button>
+                            </Link>
                           </td>
                         </tr>
                       )

@@ -25,8 +25,8 @@ export default class LaporanKeuangan extends Component {
     tahun: "",
     pembeli: "",
     filter: "",
-    harga: "",
-    jumlah: "",
+    nominal: "",
+    keterangan: "",
     data: [],
     file: [],
     idUp: "",
@@ -133,22 +133,37 @@ export default class LaporanKeuangan extends Component {
     newWin.close();
   };
 
-  addReport = async e => {
+  addReportIn = async e => {
     e.preventDefault();
     const payload = {
       tanggal: this.state.tanggal,
       idBird: this.state.idBird,
       pembeli: this.state.pembeli,
-      harga: this.state.harga
+      nominal: this.state.nominal,
+      keterangan: this.state.keterangan
     };
 
-    await api.insertFinance(payload).then(res => {
+    await api.insertFinanceIn(payload).then(res => {
       window.alert(`Report inserted successfully`);
       this.getReportFromDb();
     });
 
     await api.updateBirdById(this.state.idBird).then(res => {
       this.getDataFromDb();
+    });
+    //registerburung(burungData);
+  };
+  addReportOut = async e => {
+    e.preventDefault();
+    const payload = {
+      tanggal: this.state.tanggal,
+      nominal: this.state.nominal,
+      keterangan: this.state.keterangan
+    };
+
+    await api.insertFinanceOut(payload).then(res => {
+      window.alert(`Report inserted successfully`);
+      this.getReportFromDb();
     });
     //registerburung(burungData);
   };
@@ -178,41 +193,56 @@ export default class LaporanKeuangan extends Component {
       <Container>
         <div className="jumbotron jumbotron-fluid">
           <div className="container">
-            <h1 className="display-4">Laporan Keuangan</h1>
+            <h1 className="display-4"> Keuangan</h1>
             <p className="lead">
-              Laporan digunakan untuk melihat laporan keuangan dan transaksi
-              burung kenari.
+              Detail Keuangan digunakan untuk melihat laporan keuangan dan
+              transaksi burung kenari.
             </p>
-            {/* <button
-              type="button"
-              className="btn btn-success"
-              data-toggle="modal"
-              data-target=".bd-example-modal-lg"
-            >
-              Tambah Transaksi
-            </button>
-            <span>
-              {" "}
+            <div class="dropdown">
               <button
+                class="btn btn-success dropdown-toggle"
                 type="button"
-                className="btn btn-primary"
-                onClick={e => this.print(e)}
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
               >
-                Download Jurnal
+                Pilih Jenis Transaksi
               </button>
-            </span>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a
+                  class="dropdown-item"
+                  data-toggle="modal"
+                  data-target=".bd-example-modal-lg-pendapatan"
+                  href="#pendapatan"
+                >
+                  Pendapatan
+                </a>
+                <a
+                  class="dropdown-item"
+                  data-toggle="modal"
+                  data-target=".bd-example-modal-lg-pengeluaran"
+                  href="#exampleModalLabel"
+                  href="#pengeluaran"
+                >
+                  Pengeluaran
+                </a>
+              </div>
+            </div>
+
+            {/* pendapatan */}
             <div
-              className="modal fade bd-example-modal-lg"
+              className="modal fade bd-example-modal-lg-pendapatan"
               tabindex="-1"
               role="dialog"
               aria-labelledby="myLargeModalLabel"
               aria-hidden="true"
             >
-              <div className="modal-dialog modal-lg" role="document">
+              <div className="modal-dialog modal-lg-pendapatan" role="document">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">
-                      Tambah Log
+                    <h5 className="modal-title" id="pendapatan">
+                      Tambah Transaksi Pendapatan
                     </h5>
                     <button
                       type="button"
@@ -226,7 +256,7 @@ export default class LaporanKeuangan extends Component {
                   <div className="modal-body">
                     <form>
                       <div className="form-row">
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                           <label for="inputType">Tanggal</label>
                           <input
                             type="date"
@@ -236,7 +266,8 @@ export default class LaporanKeuangan extends Component {
                             value={this.state.tanggal}
                           ></input>
                         </div>
-                        <div className="form-group col-md-4">
+
+                        <div className="form-group col-md-6">
                           <label for="inputName">Burung</label>
                           <select
                             type="text"
@@ -254,31 +285,48 @@ export default class LaporanKeuangan extends Component {
                                 ))}
                           </select>
                         </div>
-                      </div>
-                      <div className="form-row">
-                        <div className="form-group col-md-4">
-                          <label for="inputCity">Pembeli</label>
+                        <div className="form-group col-md-6">
+                          <label for="inputCity">pembeli</label>
                           <input
                             type="text"
                             className="form-control"
                             id="inputCity"
                             name="pembeli"
                             onChange={e => this.onChange(e)}
-                            value={this.state.pembeli}
+                            // value="#"
                           ></input>
                         </div>
-                        <div className="form-group col-md-4">
-                          <label for="inputCity">Harga</label>
+                      </div>
+
+                      <div className="form-row">
+                        <div className="form-group col-md-12">
+                          <label for="inputCity">Nominal</label>
                           <input
                             type="number"
                             className="form-control"
                             id="inputCity"
-                            name="harga"
+                            name="nominal"
                             onChange={e => this.onChange(e)}
-                            value={this.state.harga}
+                            value={this.state.nominal}
                           ></input>
                         </div>
                       </div>
+
+                      <div className="form-group">
+                        <label for="exampleFormControlTextarea1">
+                          Keterangan
+                        </label>
+                        <textarea
+                          className="form-control"
+                          id="exampleFormControlTextarea1"
+                          rows="3"
+                          type="text"
+                          name="keterangan"
+                          onChange={e => this.onChange(e)}
+                          value={this.state.keterangan}
+                        ></textarea>
+                      </div>
+                      
 
                       <div className="modal-footer">
                         <button
@@ -291,7 +339,7 @@ export default class LaporanKeuangan extends Component {
                         <button
                           type="button"
                           className="btn btn-success"
-                          onClick={e => this.addReport(e)}
+                          onClick={e => this.addReportIn(e)}
                         >
                           Tambahkan
                         </button>
@@ -300,7 +348,93 @@ export default class LaporanKeuangan extends Component {
                   </div>
                 </div>
               </div>
-            </div> */}
+            </div>
+          </div>
+        </div>
+        {/* pengeluaran */}
+        <div
+          className="modal fade bd-example-modal-lg-pengeluaran"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="myLargeModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg-pengeluaran" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="pengeluaran">
+                  Tambah Transaksi Pengeluaran
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="form-row">
+                    <div className="form-group col-md-12">
+                      <label for="inputType">Tanggal</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="tanggal"
+                        onChange={e => this.onChange(e)}
+                        value={this.state.tanggal}
+                      ></input>
+                    </div>
+
+                  <div className="form-row">
+                    <div className="form-group col-md-12">
+                      <label for="inputCity">Nominal</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="inputCity"
+                        name="nominal"
+                        onChange={e => this.onChange(e)}
+                        value={this.state.nominal}
+                      ></input>
+                    </div>
+                  </div>
+
+                  </div>
+                  <div className="form-group">
+                    <label for="exampleFormControlTextarea1">Keterangan</label>
+                    <textarea
+                      className="form-control"
+                      id="exampleFormControlTextarea1"
+                      rows="3"
+                      type="text"
+                      name="keterangan"
+                      onChange={e => this.onChange(e)}
+                      value={this.state.keterangan}
+                    ></textarea>
+                  </div>
+
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-success"
+                      onClick={e => this.addReportOut(e)}
+                    >
+                      Tambahkan
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
         <div className="container">
@@ -380,16 +514,15 @@ export default class LaporanKeuangan extends Component {
                 ? "NO DB ENTRIES YET"
                 : file.map(
                     fil => (
-                      (d = new Date(fil.tanggal)),
                       (
                         <tr>
                           <td>
-                            {" " + months[d.getMonth()] + " " + d.getFullYear()}
+                            {" " + months[fil._id.month-1] + " " + fil._id.year}
                           </td>
-                          <td>500k</td>
-                          <td>150k</td>
+                          <td>{fil.pengeluaran}</td>
+                          <td>{fil.pendapatan}</td>
                           <td>
-                            <Link to="/DetailKeuangan">
+                            <Link to={"/DetailKeuangan?"+fil._id.month+"+"+fil._id.year}>
                               <button className="btn btn-success">
                                 Detail
                               </button>

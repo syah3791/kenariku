@@ -46,7 +46,7 @@ export default class LihatBurung extends Component {
   };
 
   componentDidMount = async () => {
-    var query = window.location.search.substring(1);
+    var query = window.location.search.substring(1); 
     await api.getBirdById(query).then(bird => {
       console.log(bird);
       this.setState({

@@ -13,6 +13,7 @@ import FarmManagement from "./components/pages/FarmManagement";
 import Galery from "./components/pages/Galery";
 import LihatBurung from "./components/pages/LihatBurung";
 import LihatBurung2 from "./components/pages/LihatBurung2";
+import DetailTrans from "./components/pages/DetailTrans";
 import Report from "./components/pages/Report";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
@@ -81,6 +82,9 @@ class App extends React.Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path="/lihatRep" component={LihatBurung2} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/lihatTrans" component={DetailTrans} />
             </Switch>
             <Switch>
               <PrivateRoute exact path="/Report" component={Report} />
