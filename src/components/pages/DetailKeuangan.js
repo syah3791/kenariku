@@ -184,7 +184,7 @@ export default class DetailKeuangan extends Component {
               Detail Keuangan digunakan untuk melihat laporan keuangan dan
               transaksi burung kenari.
             </p>
-            <button
+            {/* <button
               type="button"
               className="btn btn-success"
               data-toggle="modal"
@@ -201,7 +201,7 @@ export default class DetailKeuangan extends Component {
               >
                 Download Jurnal
               </button>
-            </span>
+            </span> */}
             <div
               className="modal fade bd-example-modal-lg"
               tabindex="-1"
@@ -401,13 +401,23 @@ export default class DetailKeuangan extends Component {
                       (
                         <tr>
                           <td>
-                            {fil.day +" " + months[fil.month-1] + " " + fil.year}
+                            {fil.day +
+                              " " +
+                              months[fil.month - 1] +
+                              " " +
+                              fil.year}
                           </td>
                           <td>{fil.keterangan}</td>
-                          <td>{fil.out}{fil.in}</td>
+                          <td>
+                            {fil.out}
+                            {fil.in}
+                          </td>
                           <td>{status[fil.status]}</td>
                           <td>
-                            <Link to={"/lihatTrans?" + fil._id} className="card-link">
+                            <Link
+                              to={"/lihatTrans?" + fil._id}
+                              className="card-link"
+                            >
                               <button type="button" className="btn btn-warning">
                                 See More
                               </button>

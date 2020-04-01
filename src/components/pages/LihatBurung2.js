@@ -36,6 +36,9 @@ const Container = styled.nav`
     margin: 10px;
     padding: 20px;
   }
+  .container {
+    margin-top: 50px;
+  }
 `;
 
 export default class LihatBurung extends Component {
@@ -46,7 +49,7 @@ export default class LihatBurung extends Component {
   };
 
   componentDidMount = async () => {
-    var query = window.location.search.substring(1); 
+    var query = window.location.search.substring(1);
     await api.getBirdById(query).then(bird => {
       console.log(bird);
       this.setState({
@@ -66,7 +69,7 @@ export default class LihatBurung extends Component {
       [target.name]: target.value
     });
   }
-searchReport({ target }) {
+  searchReport({ target }) {
     // Declare variables
     var filter, table, tr, td, i, j, txtValue, temp;
     filter = target.value.toUpperCase();
@@ -159,6 +162,9 @@ searchReport({ target }) {
           </div>
 
           <div className="container">
+            <h2 style={{ textAlign: "center", margin: 50 }}>
+              Report Untuk Burung {data.name}
+            </h2>
             <div className="input-group ">
               <div className="input-group mb-3">
                 <input
@@ -205,7 +211,6 @@ searchReport({ target }) {
                             <td>{fil.log}</td>
                             <td>{fil.pakan}</td>
                             <td>{fil.status}</td>
-                            
                           </tr>
                         )
                       )
@@ -213,7 +218,6 @@ searchReport({ target }) {
               </tbody>
             </table>
           </div>
-
         </div>
       </Container>
     );

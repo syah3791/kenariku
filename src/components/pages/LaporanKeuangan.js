@@ -5,7 +5,8 @@ import api from "../utils/ServicesFinance";
 
 const Container = styled.nav`
   .jumbotron {
-    background-image: url("https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-financial-management-banner-background-design-image_188731.jpg");
+    /* background-image: url("https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-financial-management-banner-background-design-image_188731.jpg"); */
+    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/000/457/342/original/Finance_Flat_Design_In_Blue._Business_and_Finance_Illustration_in_Doodle_Style._Increasing_Income_and_Money_Management.jpg");
     background-size: cover;
   }
   .table {
@@ -114,7 +115,7 @@ export default class LaporanKeuangan extends Component {
       }
       if (c > 0) {
         tr[i].style.display = "";
-        jum += parseFloat(td[3].innerText);
+        jum += parseFloat(td[1].innerText);
       } else {
         tr[i].style.display = "none";
       }
@@ -216,7 +217,7 @@ export default class LaporanKeuangan extends Component {
                   data-target=".bd-example-modal-lg-pendapatan"
                   href="#pendapatan"
                 >
-                  Pendapatan
+                  Pemasukan
                 </a>
                 <a
                   class="dropdown-item"
@@ -326,7 +327,6 @@ export default class LaporanKeuangan extends Component {
                           value={this.state.keterangan}
                         ></textarea>
                       </div>
-                      
 
                       <div className="modal-footer">
                         <button
@@ -388,20 +388,19 @@ export default class LaporanKeuangan extends Component {
                       ></input>
                     </div>
 
-                  <div className="form-row">
-                    <div className="form-group col-md-12">
-                      <label for="inputCity">Nominal</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="inputCity"
-                        name="nominal"
-                        onChange={e => this.onChange(e)}
-                        value={this.state.nominal}
-                      ></input>
+                    <div className="form-row">
+                      <div className="form-group col-md-12">
+                        <label for="inputCity">Nominal</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="inputCity"
+                          name="nominal"
+                          onChange={e => this.onChange(e)}
+                          value={this.state.nominal}
+                        ></input>
+                      </div>
                     </div>
-                  </div>
-
                   </div>
                   <div className="form-group">
                     <label for="exampleFormControlTextarea1">Keterangan</label>
@@ -453,7 +452,7 @@ export default class LaporanKeuangan extends Component {
                 </option>
                 <option value="January">Januari</option>
                 <option value="February">Februari</option>
-                <option value="Maret">Maret</option>
+                <option value="March">Maret</option>
                 <option value="April">April</option>
                 <option value="Mei">Mei</option>
                 <option value="Juni">Juni</option>
@@ -483,7 +482,7 @@ export default class LaporanKeuangan extends Component {
               </select>
             </div>
             <div className="form-group col-md-4">
-              <h5 style={{}}>Total Penjualan Bulan {filter} Adalah</h5>
+              <h5 style={{}}>Total Pendapatan Bulan {filter} Adalah</h5>
               <h5 style={{ fontWeight: "bold" }}>Rp.{jumlah},00</h5>
             </div>
           </div>
@@ -503,7 +502,7 @@ export default class LaporanKeuangan extends Component {
             <thead>
               <tr>
                 <th scope="col">Bulan</th>
-                <th scope="col">Pendapatan</th>
+                <th scope="col">Pemasukan</th>
                 <th scope="col">Pengeluaran</th>
 
                 <th scope="col">Action</th>
@@ -512,26 +511,27 @@ export default class LaporanKeuangan extends Component {
             <tbody id="listJournal">
               {file.length <= 0
                 ? "NO DB ENTRIES YET"
-                : file.map(
-                    fil => (
-                      (
-                        <tr>
-                          <td>
-                            {" " + months[fil._id.month-1] + " " + fil._id.year}
-                          </td>
-                          <td>{fil.pengeluaran}</td>
-                          <td>{fil.pendapatan}</td>
-                          <td>
-                            <Link to={"/DetailKeuangan?"+fil._id.month+"+"+fil._id.year}>
-                              <button className="btn btn-success">
-                                Detail
-                              </button>
-                            </Link>
-                          </td>
-                        </tr>
-                      )
-                    )
-                  )}
+                : file.map(fil => (
+                    <tr>
+                      <td>
+                        {" " + months[fil._id.month - 1] + " " + fil._id.year}
+                      </td>
+                      <td>{fil.pendapatan}</td>
+                      <td>{fil.pengeluaran}</td>
+                      <td>
+                        <Link
+                          to={
+                            "/DetailKeuangan?" +
+                            fil._id.month +
+                            "+" +
+                            fil._id.year
+                          }
+                        >
+                          <button className="btn btn-success">Detail</button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>

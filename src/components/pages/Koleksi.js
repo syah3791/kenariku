@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { withRouter, Link } from "react-router-dom";
+import api from "../utils/ServicesImage";
 
 const Container = styled.nav`
   margin-bottom: 100px;
@@ -65,13 +67,90 @@ const Container = styled.nav`
 
 export default class Koleksi extends Component {
   state = {
-    files: []
+    path: "http://localhost:5000/img/",
+    judul: window.location.search.substring(1),
+    data: []
   };
 
+  componentDidMount = async () => {
+    this.setState({ isLoading: true });
+    var query = window.location.search.substring(1);
+    await api.getImage(query).then(image => {
+      this.setState({
+        data: image.data.data
+      });
+    });
+  };
+  
+  componentWillUnmount() {
+    if (this.state.intervalIsSet) {
+      clearInterval(this.state.intervalIsSet);
+      this.setState({ intervalIsSet: null });
+    }
+  }
+
+  getDataFromDb = () => {
+    var query = window.location.search.substring(1);
+    api.getImage(query).then(image => {
+      this.setState({
+        data: image.data.data
+      });
+    });
+  };
+
+  onChange({ target }) {
+    this.setState({
+      [target.name]: target.value
+    });
+  }
+
+  add = async e => {
+    e.preventDefault();
+    if (this.state.image) {
+      const payload = {
+      judul: this.state.judul,
+      image: this.state.image
+    };
+
+    await api.insertImage(payload).then(res => {
+      window.alert(`Collection successfully`);
+      this.getDataFromDb();
+    });
+    }else window.alert(`Tambahkan gambar`);
+  };
+
+  deleteData = async () => {
+    await api.deleteGById(this.state.idUp).then(res => {
+      window.alert(`Bird deleted successfully`);
+      this.getDataFromDb();
+    });
+    //registerburung(burungData);
+  };
+
+  uploadImage = async ({ target }) => {
+    var image = document.getElementById(target.name).files[0];
+    var formdata = new FormData();
+    formdata.append("files", image, image.name);
+    await api.uploadImg(formdata).then(res => {
+      if (res.data.success) {
+        window.alert("Gambar " + target.name + " berhasil di upload");
+        this.setState({
+          [target.name]: res.data.data
+        });
+      } else {
+        window.alert(res.data.data);
+      }
+    });
+  };
+  preview  = async ({ target }) =>{
+    var output = document.getElementById("output"+target.id);
+    output.src = URL.createObjectURL(target.files[0]);
+  }
   fileSelectedHandler = e => {
     this.setState({ files: [...this.state.files, ...e.target.files] });
   };
   render() {
+    const { data } = this.state;
     return (
       <Container>
         <section class="jumbotron text-center">
@@ -121,31 +200,17 @@ export default class Koleksi extends Component {
                       >
                         <div className="form-group col-md-3">
                           <label for="inputCity">Gambar Burung</label>
-                          <input type="file" id="foto" />
-                          <span>
+                          <input type="file" id="image" onChange={e => this.preview(e)}/>
+                          <img id="outputimage" width="100px" height="100px"/>
+                          <div class="form-group">
                             <button
                               type="button"
-                              name="foto"
+                              name="image"
                               class="btn btn-primary"
                               onClick={e => this.uploadImage(e)}
                             >
                               Upload
                             </button>
-                          </span>
-                        </div>
-                        <div className="form-group col-md-3">
-                          <label for="inputCity">Video Burung</label>
-                          <input type="file" id="foto" />
-                          <span>
-                            <button
-                              type="button"
-                              name="foto"
-                              class="btn btn-primary"
-                              onClick={e => this.uploadImage(e)}
-                            >
-                              Upload
-                            </button>
-                          </span>
                         </div>
                       </div>
 
@@ -166,6 +231,7 @@ export default class Koleksi extends Component {
                           Tambahkan
                         </button>
                       </div>
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -174,54 +240,21 @@ export default class Koleksi extends Component {
           </div>
         </section>
 
-        <section>
-          <h3 style={{ textAlign: "center", margin: 30 }}>Videos</h3>
-          <div className="videoCover"></div>
-        </section>
         <h3 style={{ textAlign: "center", margin: 30 }}>Album </h3>
         <div
           class="row"
           style={{ margin: "auto", width: "100%", justifyContent: "center" }}
-        >
+        >{data.length <= 0
+            ? 'NO DB ENTRIES YET'
+            : data.map(
+            (dat) => (
           <div class="column">
             <img
-              src="https://www.nhm.ac.uk/content/dam/nhmwww/discover/common-tailorbirds/Common-tailorbird-full-width.jpg.thumb.1920.1920.png"
-              style={{ width: "100%" }}
-            />
-            <img
-              src="https://www.hbw.com/sites/default/files/styles/ibc_1k/public/ibc/p/common_tailorbird_bocos.jpg?itok=xM5iOtMR"
-              style={{ width: "100%" }}
-            />
-            <img
-              src="https://www.imperial.ac.uk/ImageCropToolT4/imageTool/uploaded-images/newseventsimage_1557320321101_mainnews2012_x1.jpg"
+              src={this.state.path+dat.image}
               style={{ width: "100%" }}
             />
           </div>
-          <div class="column">
-            <img
-              src="https://scx1.b-cdn.net/csz/news/800/2019/mostnativebi.jpg"
-              style={{ width: "100%" }}
-            />
-
-            <img
-              src="https://ontariospca.ca/wp-content/uploads/2019/03/Living-with-wildlife-birds-544x600.jpg"
-              style={{ width: "100%" }}
-            />
-          </div>
-          <div class="column">
-            <img
-              src="https://media.phillyvoice.com/media/images/bird-in-spinach.2e16d0ba.fill-735x490.jpg"
-              style={{ width: "100%" }}
-            />
-            <img
-              src="https://www.nhm.ac.uk/content/dam/nhmwww/discover/common-tailorbirds/Common-tailorbird-full-width.jpg.thumb.1920.1920.png"
-              style={{ width: "100%" }}
-            />
-            <img
-              src="https://img.jakpost.net/c/2019/12/20/2019_12_20_83809_1576815251._large.jpg"
-              style={{ width: "100%" }}
-            />
-          </div>
+          ))}
         </div>
       </Container>
     );

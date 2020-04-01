@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import api from "../utils/ServicesBreeding";
-import api2 from "../utils/ServicesReport";
+import api from "../utils/ServicesBatchlog";
 
 const Container = styled.nav`
   .jumbotron {
@@ -18,39 +17,48 @@ const Container = styled.nav`
   .action {
     text-align: end;
   }
+  .Myrecord {
+    display: flex;
+    justify-content: flex-start;
+  }
 `;
 
 export default class DetailLog extends Component {
   state = {
-    nama: "",
+    idBatch: window.location.search.substring(1),
+    status: "",
     tanggal: "",
     jam: "",
+    born: "",
+    die: "",
     log: "",
-    pakan: "",
-    status: "",
-    namaUp: "",
-    tanggalUp: "",
-    jamUp: "",
-    logUp: "",
-    pakanUp: "",
-    statusUp: "",
     data: [],
     file: [],
+    nama: [],
     idUp: "",
     id: 0
   };
   componentDidMount = async () => {
     var query = window.location.search.substring(1);
-    await api.getBreedingById(query).then(bird => {
-      console.log(bird);
+    await api.getBatchlogById(query).then(batchlog => {
+      console.log(batchlog);
       this.setState({
-        file: bird.data.data
+        file: batchlog.data.data
       });
     });
-    await api.getNameById(query).then(bird => {
-      console.log(bird);
+    await api.getBatchById(query).then(batch => {
+      console.log(batch);
       this.setState({
-        data: bird.data.data
+        data: batch.data.data
+      });
+      if (this.state.data.status==0) {
+        document.getElementById("tambah").disabled = true;
+        document.getElementById("akhir").disabled = true;
+      }      
+    });    
+    await api.getName(query).then(name => {
+      this.setState({
+        nama: name.data.data
       });
     });
   };
@@ -69,10 +77,10 @@ export default class DetailLog extends Component {
 
   getDataFromDb = () => {
     var query = window.location.search.substring(1);
-    api.getBreedingById(query).then(bird => {
-      console.log(bird);
+    api.getBatchlogById(query).then(batch => {
+      console.log(batch);
       this.setState({
-        file: bird.data.data
+        file: batch.data.data
       });
     });
   };
@@ -115,42 +123,40 @@ export default class DetailLog extends Component {
 
   addReport = async e => {
     e.preventDefault();
-    window.alert(this.state.tanggal);
     const payload = {
-      nama: this.state.nama,
+      idbatch: this.state.idBatch,
+      status: this.state.status,
       tanggal: this.state.tanggal,
       jam: this.state.jam,
+      born: this.state.born,
+      die: this.state.die,
       log: this.state.log,
-      pakan: this.state.pakan,
-      status: this.state.status
     };
+    window.alert(payload.tanggal);
 
-    await api2.insertReport(payload).then(res => {
+    await api.insertBatchlog(payload).then(res => {
       window.alert(`Report inserted successfully`);
-      this.getDataFromDb();
+      this.getDataFromDb();      
     });
     //registerburung(burungData);
   };
-  updateData = async e => {
+  batchStat = async e => {
     e.preventDefault();
 
     const payload = {
-      nama: this.state.namaUp,
-      tanggal: this.state.tanggalUp,
-      jam: this.state.jamUp,
-      log: this.state.logUp,
-      pakan: this.state.pakanUp,
-      status: this.state.statusUp
+      status: 0
     };
 
-    await api2.updateReportById(this.state.idUp, payload).then(res => {
+    await api.updateBacthById(this.state.idBatch, payload).then(res => {
       window.alert(`Report updated successfully`);
+      document.getElementById("tambah").disabled = true;
+      document.getElementById("akhir").disabled = true;
     });
     //registerburung(burungData);
   };
   deleteData = async e => {
     e.preventDefault();
-    await api.deleteReportById(this.state.idUp).then(res => {
+    await api.deleteBirdById(this.state.idBatch).then(res => {
       window.alert(`Bird deleted successfully`);
     });
   };
@@ -158,6 +164,7 @@ export default class DetailLog extends Component {
   render() {
     const { data } = this.state;
     const { file } = this.state;
+    const { nama } = this.state;
     const months = [
       "January",
       "February",
@@ -183,6 +190,7 @@ export default class DetailLog extends Component {
               kenari dengan menambahkanny ke batch
             </p>
             <button
+              id="tambah"
               type="button"
               className="btn btn-success"
               data-toggle="modal"
@@ -193,12 +201,55 @@ export default class DetailLog extends Component {
             <span>
               {" "}
               <button
+                id="akhir"
                 type="button"
-                className="btn btn-primary"
-                onClick={e => this.print(e)}
+                class="btn btn-danger"
+                data-toggle="modal"
+                data-target="#exampleModalLong"
               >
-                Download Log
+                Akhiri Batch
               </button>
+              <div
+                class="modal fade"
+                id="exampleModalLong"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="exampleModalLongTitle"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">
+                        Warning
+                      </h5>
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Apakah ingin mengakhiri batch ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal"
+                      >
+                        No
+                      </button>
+                      <button type="button" class="btn btn-primary" onClick={e => this.batchStat(e)}>
+                        Yes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </span>
 
             <div
@@ -227,30 +278,25 @@ export default class DetailLog extends Component {
                   <div className="modal-body">
                     <form>
                       <div className="form-row">
-                        <div className="form-group col-md-4">
-                          <label for="inputName">Nama</label>
+                        <div className="form-group col-md-6">
+                          <label for="inputUmur">Status</label>
                           <select
                             type="text"
-                            name="nama"
+                            name="status"
                             className="form-control"
-                            id="inputState"
+                            id="inputCity"
                             onChange={e => this.onChange(e)}
-                            value={this.state.nama}
+                            value={this.state.status}
                           >
                             <option selected>Choose</option>
-                            {data.length <= 0
-                              ? "NO DB ENTRIES YET"
-                              : data.map(dat => (
-                                  <option value={dat.betina}> {dat.betina} </option>
-                                ))}
-                                {data.length <= 0
-                              ? "NO DB ENTRIES YET"
-                              : data.map(dat => (
-                                  <option value={dat.jantan}> {dat.jantan} </option>
-                                ))}
+                            <option value="Breeding Activity">Breeding Activity</option>
+                            <option value="Kawin">Kawin</option>
+                            <option value="Bertelur">Bertelur</option>
+                            <option value="Perkembangan">Perkembangan</option>
                           </select>
                         </div>
-                        <div className="form-group col-md-4">
+
+                        <div className="form-group col-md-6">
                           <label for="inputType">Tanggal</label>
                           <input
                             type="date"
@@ -260,7 +306,7 @@ export default class DetailLog extends Component {
                             value={this.state.tanggal}
                           ></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                           <label for="inputType">Jam</label>
                           <input
                             type="time"
@@ -268,6 +314,28 @@ export default class DetailLog extends Component {
                             name="jam"
                             onChange={e => this.onChange(e)}
                             value={this.state.jam}
+                          ></input>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group col-md-6">
+                          <label>Born</label>
+                          <input
+                            name="born"
+                            type="text"
+                            className="form-control"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.born}
+                          ></input>
+                        </div>
+                        <div className="form-group col-md-6">
+                          <label>Die</label>
+                          <input
+                            name="die"
+                            type="text"
+                            className="form-control"
+                            onChange={e => this.onChange(e)}
+                            value={this.state.die}
                           ></input>
                         </div>
                       </div>
@@ -282,37 +350,6 @@ export default class DetailLog extends Component {
                           onChange={e => this.onChange(e)}
                           value={this.state.log}
                         ></textarea>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label for="inputCity">Pakan</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="inputCity"
-                            name="pakan"
-                            onChange={e => this.onChange(e)}
-                            value={this.state.pakan}
-                          ></input>
-                        </div>
-                        <div className="form-group col-md-6">
-                          <label for="inputUmur">Status</label>
-                          <select
-                            type="text"
-                            name="status"
-                            className="form-control"
-                            id="inputCity"
-                            onChange={e => this.onChange(e)}
-                            value={this.state.status}
-                          >
-                            <option selected>Choose</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Sakit">Sakit</option>
-                            <option value="Pemulihan">Pemulihan</option>
-                            <option value="Kritis">Kritis</option>
-                          </select>
-                        </div>
                       </div>
 
                       <div className="modal-footer">
@@ -340,30 +377,21 @@ export default class DetailLog extends Component {
         </div>
         <div>
           <div className="container">
-            <div className="input-group ">
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Cari Log"
-                  aria-label=""
-                  id="search"
-                  onChange={e => this.searchReport(e)}
-                  aria-describedby="basic-addon2"
-                ></input>
-              </div>
+            <h3>Batch: {data.nama}</h3>
+            <div className="Myrecord">
+              {nama.map(nam => ("ID Jantan: "+nam.jantan+"    "+"ID Betina: "+nam.betina))}
             </div>
 
             <table class="table">
               <thead>
                 <tr>
-                  <th scope="col">Nama</th>
-                  <th scope="col">Tanggal</th>
-                  <th scope="col">Jam</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Log</th>
-                  <th scope="col">Pakan</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Action</th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col">Jam</th>
+                  <th scope="col">Tanggal</th>
                 </tr>
               </thead>
               <tbody id="listReports">
@@ -374,19 +402,18 @@ export default class DetailLog extends Component {
                         (d = new Date(fil.tanggal)),
                         (
                           <tr>
-                            <th scope="row">{fil.nama}</th>
+                            <th scope="row">{fil.status}</th>
+                            <td>{fil.log}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{fil.jam}</td>
                             <td>
                               {d.getDate() +
                                 " " +
                                 months[d.getMonth()] +
                                 " " +
                                 d.getFullYear()}
-                            </td>
-                            <td>{fil.jam}</td>
-                            <td>{fil.log}</td>
-                            <td>{fil.pakan}</td>
-                            <td>{fil.status}</td>
-                            <td>
                               {/* <button
                                 type="button"
                                 className="btn btn-success"

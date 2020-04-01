@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
 import api from '../utils/ServicesBurung';
+import api2 from "../utils/ServicesBreeding";
 
 const Container = styled.nav`
   .jumbotron {
@@ -77,19 +78,22 @@ export default class FarmManagement extends Component {
     path: "http://localhost:5000/img/",
     name: "",
     nameUp:"",
-    deskirpsiUp:"",
+    deskripsiUp:"",
     jenisUp:"",
     warnaUp:"",
     jenis_kelaminUp: "",
-    umurUp:"",
+    tanggalUp:"",
     hargaUp: "",
+    peternak:"",
     statusUp: "",
     jenis: "",
     warna: "",
     jenis_kelamin: "",
-    umur: "",
+    tanggal: "",
     harga: "",
     data: [],
+    betina: [],
+    jantan: [],
     idUp:"",
     id: 0,
     image1: "",
@@ -98,6 +102,8 @@ export default class FarmManagement extends Component {
     image2Up: "",
     image3: "",
     image3Up: "",
+    idbetina: "",
+    idjantan: "",
     message: null,
     intervalIsSet: false,
     idToDelete: null,
@@ -123,6 +129,16 @@ export default class FarmManagement extends Component {
       ));
     document.getElementById("stock").innerHTML = s;
     document.getElementById("jual").innerHTML = t;
+    await api2.getBetina().then(birdF => {
+      this.setState({
+        betina: birdF.data.data
+      });
+    });
+    await api2.getJantan().then(birdM => {
+      this.setState({
+        jantan: birdM.data.data
+      });
+    });
   }
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
@@ -188,14 +204,15 @@ export default class FarmManagement extends Component {
       deskripsi: this.state.deskripsi,
       jenis: this.state.jenis,
       warna: this.state.warna,
+    
       jenis_kelamin: this.state.jenis_kelamin,
-      umur: this.state.umur,
+      tanggal: this.state.tanggal,
       harga: this.state.harga,
       image1: this.state.image1,
       image2: this.state.image2,
       image3: this.state.image3
     };
-    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.umur&&payload.image1&&payload.image2&&payload.image3) {
+    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.tanggal&&payload.image1&&payload.image2&&payload.image3) {
       await api.insertBird(payload).then(res => {
         window.alert(`Bird inserted successfully`);
         this.getDataFromDb();
@@ -205,7 +222,7 @@ export default class FarmManagement extends Component {
           jenis: "",
           warna: "",
           jenis_kelamin: "",
-          umur: "",
+          tanggal: "",
           harga: "",
           image1: "",
           image2: "",
@@ -225,14 +242,14 @@ export default class FarmManagement extends Component {
       jenis: this.state.jenisUp,
       warna: this.state.warnaUp,
       jenis_kelamin: this.state.jenis_kelaminUp,
-      umur: this.state.umurUp,
+      tanggal: this.state.tanggalUp,
       harga: this.state.hargaUp,
       status: this.state.statusUp,
       image1: this.state.image1Up,
       image2: this.state.image2Up,
       image3: this.state.image3Up
     };
-    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.umur&&payload.image1&&payload.image2&&payload.image3) {
+    if (payload.name&&payload.deskripsi&&payload.jenis&&payload.warna&&payload.jenis_kelamin&&payload.tanggal&&payload.image1&&payload.image2&&payload.image3) {
       await api.updateBirdById(this.state.idUp,payload).then(res => {
             window.alert(`Bird updated successfully`);
             this.getDataFromDb();
@@ -248,6 +265,50 @@ export default class FarmManagement extends Component {
     //registerburung(burungData);
   }
 
+  imageVal = (gender, filter) => {
+    for (var i = 0; i <= gender.length; i++) {
+      if (gender[0].name == filter) {
+        return gender[i];
+      }
+    }
+  };
+
+  addBreeding = async e => {
+    e.preventDefault();
+    var imageb = "",
+      imagej = "";
+    if (this.state.idbetina && this.state.idjantan) {
+      imageb = this.imageVal(this.state.betina, this.state.idbetina);
+      imagej = this.imageVal(this.state.jantan, this.state.idjantan);
+    }
+    const payload = {
+      betina: this.state.idbetina,
+      jantan: this.state.idjantan,
+      imagebetina: imageb.image1,
+      imagejantan: imagej.image1
+    };
+    if (
+      payload.betina &&
+      payload.jantan &&
+      payload.imagebetina &&
+      payload.imagejantan
+    ) {
+      await api2.insertBreeding(payload).then(res => {
+        window.alert(`Breeding inserted successfully`);
+        this.setState({
+          idbetina: "",
+          idjantan: ""
+        });
+      });
+      api2.updateBirdById(imageb._id).then(res => {});
+      api2.updateBirdById(imagej._id).then(res => {
+        this.getDataFromDb();
+      });
+    } else window.alert(`Mohon isi form dengan lengkap`);
+
+    //registerburung(burungData);
+  };
+
   preview  = async ({ target }) =>{
     var output = document.getElementById("output"+target.id);
     output.src = URL.createObjectURL(target.files[0]);
@@ -259,7 +320,7 @@ export default class FarmManagement extends Component {
     formdata.append('files',image,image.name);
     await api.upload(formdata).then(res => {
       if (res.data.success) {
-        window.alert("Gambar "+target.name+" berhasil di upload");
+        window.alert("Gambar "+target.name+" Berhasil di upload");
         this.setState({
           [target.name]: res.data.data
         });
@@ -271,6 +332,9 @@ export default class FarmManagement extends Component {
 
     const { data } = this.state;
     const stat = ["Terjual", "Stok"];
+    const { betina } = this.state;
+    const { jantan } = this.state;
+    const age = new Date();
    
     return (
       <Container>
@@ -285,22 +349,144 @@ export default class FarmManagement extends Component {
               type="button"
               className="btn btn-success"
               data-toggle="modal"
-              data-target=".bd-example-modal-lg"
+              data-target=".bd-example-modal-lg-register"
             >
               Register Burung
             </button>
-
+            { "          "}
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-toggle="modal"
+              data-target=".bd-example-modal-lg-parent"
+            >
+              Register Parent
+            </button>
+            
         
-
+{/* tambah parent */}
             <form id="addForm">
               <div
-                className="modal fade bd-example-modal-lg"
+                className="modal fade bd-example-modal-lg-parent"
                 tabindex="-1"
                 role="dialog"
                 aria-labelledby="myLargeModalLabel"
                 aria-hidden="true"
               >
-                <div className="modal-dialog modal-lg" role="document">
+                <div className="modal-dialog modal-lg-parent" role="document">
+                  <div className="modal-content" closeModal={this.closeModal}>
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        Register Parent
+                      </h5>
+                      <button
+                        type="button"
+                        className="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <form>
+                        <div className="form-row">
+                        <div className="form-group col-md-6">
+                            <label for="inputCity">Ring Jantan </label>
+                             <select
+                              type="text"
+                              name="idjantan"
+                              className="form-control"
+                              id="idjantan"
+                              required
+                              onChange={e => this.onChange(e)}
+                              value={this.state.idjantan}
+                            >
+                              <option selected>Choose</option>
+                              {jantan.length <= 0
+                                ? "NO DB ENTRIES YET"
+                                : jantan.map(jan => (
+                                    <option value={jan.name}>{jan.name}</option>
+                                  ))}
+                            
+                            </select>
+                          </div>
+                          
+                          <div className="form-group col-md-6">
+                            <label for="inputCity">Ring Betina </label>
+                            <select
+                              type="text"
+                              name="idbetina"
+                              className="form-control"
+                              id="idjantan"
+                              required
+                              onChange={e => this.onChange(e)}
+                              value={this.state.idbetina}
+                            >
+                              <option selected>Choose</option>
+                              {jantan.length <= 0
+                                ? "NO DB ENTRIES YET"
+                                : betina.map(bet => (
+                                    <option value={bet.name}>{bet.name}</option>
+                                  ))}
+                            
+                            </select>
+                          </div>
+                          
+                          </div>
+
+                        
+                        {/* <div className="form-row" style={{justifyContent:"space-between"}}>
+                          <div className="form-group col-md-3">
+                            <label for="inputCity"></label>
+                            <input type="file" id="image1" onChange={e => this.preview(e)}/>
+                            <img id="outputimage1" width="100px" height="100px"/>
+                            <div class="form-group">
+                              <button type="button" name="image1" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
+                            </div>
+                          </div>
+                       
+                          <div className="form-group col-md-3">
+                            <label for="inputCity"></label>
+                            <input type="file" id="image3" onChange={e => this.preview(e)}/>
+                            <img id="outputimage3" width="100px" height="100px"/>
+                            <div class="form-group">
+                              <button type="button" name="image3" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
+                            </div>
+                          </div>
+                        </div> */}
+                    
+
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-dismiss="modal"
+                          >
+                            Close
+                          </button>
+                          <button type="submit" className="btn btn-success" onClick={e => this.addBreeding(e)}>
+                            Tambahkan
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+        
+{/* tambah burung */}
+            <form id="addForm">
+              <div
+                className="modal fade bd-example-modal-lg-register"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="myLargeModalLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-lg-register" role="document">
                   <div className="modal-content" closeModal={this.closeModal}>
                     <div className="modal-header">
                       <h5 className="modal-title" id="exampleModalLabel">
@@ -329,7 +515,7 @@ export default class FarmManagement extends Component {
                             ></input>
                           </div>
                           <div className="form-group col-md-6">
-                            <label for="inputCity">Jenis</label>
+                            <label for="inputCity">Jenis Kenari </label>
                             <select 
                               type="text"
                               name="jenis"
@@ -339,41 +525,59 @@ export default class FarmManagement extends Component {
                               value={this.state.jenis}
                               >
                               <option selected>Choose</option>
-                              <option value="Kenari Melayu">Kenari Melayu</option>
+                              <option value="Kenari Lokal"> Kenari Lokal</option>
+                              <option value="Kenari Lokal"> Kenari Loper</option>
                               <option value="Kenari Yorkshire">Kenari Yorkshire</option>
-                              <option value="Kenari Waterslager">Kenari Waterslager</option>
-                              <option value="Kenari Spanish Timbrado">Kenari Spanish Timbrado</option>
                               <option value=" Kenari Border">Kenari Border</option>
+                              <option value="Kenari AF">Kenari AF</option>
+                              <option value="Kenari F1">Kenari F1</option>
+                              <option value="Kenari F2">Kenari F2</option>
+                              <option value="Kenari F3">Kenari F3</option>
+                              <option value="Kenari SF">Kenari SF</option>
+
+                        
                               <option value="Kenari Gloster">Kenari Gloster</option>
                               <option value="Kenari Melayu">Kenari Melayu</option>
                               <option value="Kenari Norwich">Kenari Norwich</option>
                             
                             </select>
                           </div>
+                          <div className="form-group col-md-12">
+                            <label for="inputName">Peternak</label>
+                            <input
+                              type="text"
+                              name="peternak"
+                              className="form-control"
+                              onChange={e => this.onChange(e)}
+                        
+                            ></input>
                           </div>
-
+                          </div>
+                       
                         <div className="form-group">
-                          <label for="exampleFormControlTextarea1">
+                          <label for="deskripsi">
                             Deskripsi
                           </label>
                           <textarea
                             className="form-control"
-                            id="exampleFormControlTextarea1"
+                            id="deskripsi"
                             rows="3"
                             name="deskripsi"
                             onChange={e => this.onChange(e)}
                             required
                           ></textarea>
                         </div>
+                      
+                    
 
                         <div className="form-row">
                           <div className="form-group col-md-3">
-                            <label for="inputCity">Warna</label>
+                            <label for="warna">Warna</label>
                             <input
                               type="text"
                               name="warna"
                               className="form-control"
-                              id="inputCity"
+                              id="warna"
                               onChange={e => this.onChange(e)}
                               required
                             ></input>
@@ -395,14 +599,14 @@ export default class FarmManagement extends Component {
                           </div>
 
                           <div className="form-group col-md-3">
-                            <label for="inputUmur">Umur (Bulan)</label>
+                            <label for="inputtanggal">Birthday</label>
                             <input
-                              name="umur"
-                              type="number"
+                              name="tanggal"
+                              type="date"
                               className="form-control"
                               id="inputZip"
                               onChange={e => this.onChange(e)}
-                              value={this.state.umur}
+                              value={this.state.tanggal}
                               required
                             ></input>
                           </div>
@@ -412,7 +616,7 @@ export default class FarmManagement extends Component {
                               name="harga"
                               type="number"
                               className="form-control"
-                              id="inputZip"
+                              id="harga"
                               onChange={e => this.onChange(e)}
                               required
                               value={this.state.harga}
@@ -421,7 +625,7 @@ export default class FarmManagement extends Component {
                         </div>
                         <div className="form-row" style={{justifyContent:"space-between"}}>
                           <div className="form-group col-md-3">
-                            <label for="inputCity">Gambar Depan</label>
+                            <label for="inputCity"></label>
                             <input type="file" id="image1" onChange={e => this.preview(e)}/>
                             <img id="outputimage1" width="100px" height="100px"/>
                             <div class="form-group">
@@ -429,7 +633,7 @@ export default class FarmManagement extends Component {
                             </div>
                           </div>
                           <div className="form-group col-md-3">
-                            <label for="inputCity">Gambar Depan</label>
+                            <label for="inputCity"></label>
                             <input type="file" id="image2" onChange={e => this.preview(e)}/>
                             <img id="outputimage2" width="100px" height="100px"/>
                             <div class="form-group">
@@ -438,7 +642,7 @@ export default class FarmManagement extends Component {
                           </div>
 
                           <div className="form-group col-md-3">
-                            <label for="inputCity">Gambar Depan</label>
+                            <label for="inputCity"></label>
                             <input type="file" id="image3" onChange={e => this.preview(e)}/>
                             <img id="outputimage3" width="100px" height="100px"/>
                             <div class="form-group">
@@ -515,7 +719,7 @@ export default class FarmManagement extends Component {
             <thead>
                 <tr>
                   <th scope="col"></th>
-                  <th scope="col">Ring ID</th>
+                  <th scope="col"> Ring ID</th>
                   <th scope="col">Jenis</th>
                   <th scope="col">Warna</th>
                   <th scope="col">Umur</th>
@@ -528,7 +732,12 @@ export default class FarmManagement extends Component {
               <tbody id="listBirds">
               {data.length <= 0
             ? 'NO DB ENTRIES YET'
-            : data.map((dat) => (
+            : data.map(
+            (dat) => (
+            (
+            age.setTime(Date.parse(Date()) - Date.parse(dat.tanggal))
+            ),
+            (
               
                 <tr>
                   <td>
@@ -541,7 +750,7 @@ export default class FarmManagement extends Component {
                   <td>{dat.name}</td>
                   <td>{dat.jenis}</td>
                   <td>{dat.warna}</td>
-                  <td>{dat.umur} bulan</td>
+                  <td> {age.getMonth()} bulan</td>
                   <td>{dat.jenis_kelamin}</td>
                   <td>{dat.harga}</td>
                   <td>{stat[dat.status]}</td>
@@ -555,23 +764,23 @@ export default class FarmManagement extends Component {
                         nameUp:dat.name,
                         jenisUp:dat.jenis,
                         warnaUp:dat.warna,
-                        umurUp:dat.umur,
+                        tanggalUp:dat.tanggal,
                         jenis_kelaminUp:dat.jenis_kelamin,
-                        deskirpsiUp:dat.deskripsi,
+                        deskripsiUp:dat.deskripsi,
                         idUp:dat._id,
                         hargaUp:dat.harga,
                         statusUp:dat.status,
                         image1Up:dat.image1,
                         image2Up:dat.image2,
                         image3Up:dat.image3,
-                      })}
+                     })}
                     >
                       <i class="fa fa-edit"></i>
                     
                       Edit
                     </button>
                     <div
-                      className="modal fade bd-example-modal-lg"
+                      className="modal fade bd-example-modal-lg-Up"
                       tabindex="-1"
                       role="dialog"
                       id="updatelah"
@@ -579,7 +788,7 @@ export default class FarmManagement extends Component {
                       aria-hidden="true"
                     >
                       {/* edit */}
-                      <div className="modal-dialog modal-lg" role="document">
+                      <div className="modal-dialog modal-lg-Up" role="document">
                         <div className="modal-content">
                           <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">
@@ -598,7 +807,7 @@ export default class FarmManagement extends Component {
                             <form >
                               <div className="form-row">
                                 <div className="form-group col-md-6">
-                                  <label for="inputName">Nama</label>
+                                  <label for="inputName"> RING ID</label>
                                   <input
                                     type="name"
                                     name="nameUp"
@@ -608,15 +817,33 @@ export default class FarmManagement extends Component {
                                   ></input>
                                 </div>
                                 <div className="form-group col-md-6">
-                                  <label for="inputType">Jenis</label>
-                                  <input
-                                    type="name"
-                                    name="jenisUp"
-                                    className="form-control"
-                                    onChange={e => this.onChange(e)}
-                                    value={this.state.jenisUp}
-                                  ></input>
-                                </div>
+                            <label for="inputCity">Jenis</label>
+                            <select 
+                              type="text"
+                              name="jenisUp"
+                              className="form-control"
+                              id="inputCity"
+                              onChange={e => this.onChange(e)}
+                              value={this.state.jenisUp}
+                              >
+                              <option selected>Choose</option>
+                              <option value="Kenari Lokal"> Kenari Lokal</option>
+                              <option value="Kenari Lokal"> Kenari Loper</option>
+                              <option value="Kenari Yorkshire">Kenari Yorkshire</option>
+                              <option value=" Kenari Border">Kenari Border</option>
+                              <option value="Kenari AF">Kenari AF</option>
+                              <option value="Kenari F1">Kenari F1</option>
+                              <option value="Kenari F2">Kenari F2</option>
+                              <option value="Kenari F3">Kenari F3</option>
+                              <option value="Kenari SF">Kenari SF</option>
+
+                        
+                              <option value="Kenari Gloster">Kenari Gloster</option>
+                              <option value="Kenari Melayu">Kenari Melayu</option>
+                              <option value="Kenari Norwich">Kenari Norwich</option>
+                            
+                            </select>
+                          </div>
                               </div>
 
                               <div className="form-group">
@@ -629,7 +856,7 @@ export default class FarmManagement extends Component {
                                   rows="3"
                                   name="deskripsiUp"
                                   onChange={e => this.onChange(e)}
-                                  value={this.state.deskirpsiUp}
+                                  value={this.state.deskripsiU}
                                 ></textarea>
                               </div>
 
@@ -661,14 +888,14 @@ export default class FarmManagement extends Component {
                                   </select>
                                 </div>
                                 <div className="form-group col-md-3">
-                                  <label for="inputUmur">Umur (Bulan)</label>
+                                  <label for="inputtanggal">Birthday</label>
                                   <input
-                                    type="number"
-                                    name="umurUp"
+                                    type="date"
+                                    name="tanggalUp"
                                     className="form-control"
                                     id="inputZip"
                                     onChange={e => this.onChange(e)}
-                                    value={this.state.umurUp}
+                                    value={this.state.tanggalUp}
                                   ></input>
                                 </div>
                                 <div className="form-group col-md-3">
@@ -684,25 +911,32 @@ export default class FarmManagement extends Component {
                                 </div>
                               </div>
                             
-                              <div className="form-row">
+                              <div className="form-row" style={{justifyContent:"space-between"}}>
+ 
                                 <div className="form-group col-md-3">
-                                  <label for="inputCity">Gambar Depan</label>
-                                  <input type="file" id="image1Up"/>
+                                  <label for="Image1Up"></label>
+                                  <input type="file" id="image1Up" onChange={e => this.preview(e)}/>
+                            <img id="outputimage1Up" width="100px" height="100px"/>
+ 
                                   <div class="form-group">
                                     <button type="button" name="image1Up" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                                   </div>
                                 </div>
                                 <div className="form-group col-md-3">
-                                  <label for="inputCity">Gambar Depan</label>
-                                  <input type="file" id="image2Up"/>
+                                  <label for="inputCity"></label>
+                                  <input type="file" id="image2Up" onChange={e => this.preview(e)}/>
+                            <img id="outputimage2Up" width="100px" height="100px"/>
+ 
                                   <div class="form-group">
                                     <button type="button" name="image2Up" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                                   </div>
                                 </div>
 
                                 <div className="form-group col-md-3">
-                                  <label for="inputCity">Gambar Depan</label>
-                                  <input type="file" id="image3Up"/>
+                                  <label for="inputCity"></label>
+                                  <input type="file" id="image3Up" onChange={e => this.preview(e)}/>
+                            <img id="outputimage3Up" width="100px" height="100px"/>
+ 
                                   <div class="form-group">
                                     <button type="button" name="image3Up" class="btn btn-primary" onClick={e => this.uploadImage(e)}>Upload</button>
                                   </div>
@@ -809,7 +1043,9 @@ export default class FarmManagement extends Component {
                   </td>
                  
                 </tr>
-                ))}
+                 )
+                    )
+                  )}
               </tbody>
             </table>
           </div>
