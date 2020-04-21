@@ -11,6 +11,9 @@ const Contaner = styled.nav`
     background-image: url("https://c1.wallpaperflare.com/preview/234/403/732/book-bird-cuckoo-background.jpgg");
     background-size: cover;
   }
+  .col-md-4 {
+    box-shadow: 8px 15px 25px 0 rgba(0, 0, 0, 0.16);
+  }
 `;
 
 export default class Galery extends Component {

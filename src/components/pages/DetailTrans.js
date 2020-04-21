@@ -68,24 +68,32 @@ export default class LihatBurung extends Component {
       "November",
       "December"
     ];
-    var d = new Date(data.tanggal)
+    var d = new Date(data.tanggal);
     return (
       <Container>
         <div classNameName="wrapper">
           <div className="card mb-10">
-              <div className="col-md-5">
-                <div className="card-body">
-                  <h1 className="card-title">
-                    {stat[data.status]}
-                  </h1>
+            <div className="col-md-5">
+              <div className="card-body">
+                <h1 className="card-title">{stat[data.status]}</h1>
 
-                  <hr></hr>
-                  <p className="card-text">{data.name} {d.getDate()+" "+months[d.getMonth()]+" "+d.getFullYear()}</p>
-                  <p>Pembeli : {data.pembeli}</p>
-                  <p>Keterangan : {data.keterangan}</p>
-                  <hr></hr>
-                  <p>Nominal : {data.in}{data.out}</p>
-                </div>
+                <hr></hr>
+                <p className="card-text">
+                  {data.name}{" "}
+                  {d.getDate() +
+                    " " +
+                    months[d.getMonth()] +
+                    " " +
+                    d.getFullYear()}
+                </p>
+                <p>Pembeli : {data.pembeli}</p>
+                <p>Keterangan : {data.keterangan}</p>
+                <hr></hr>
+                <p>
+                  Nominal : {data.in}
+                  {data.out}
+                </p>
+              </div>
             </div>
           </div>
         </div>

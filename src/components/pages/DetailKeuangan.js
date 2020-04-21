@@ -29,6 +29,7 @@ export default class DetailKeuangan extends Component {
     jumlah: "",
     data: [],
     file: [],
+    saldo: "",
     idUp: "",
     id: 0,
     message: null,
@@ -54,6 +55,9 @@ export default class DetailKeuangan extends Component {
         isLoading: false
       });
     });
+    await api.getSaldo().then(saldo => {
+      document.getElementById('saldo').innerHTML = saldo.data.data.saldo;
+    });
   };
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
@@ -73,6 +77,9 @@ export default class DetailKeuangan extends Component {
       this.setState({
         data: bird.data.data
       });
+    });
+    api.getSaldo().then(saldo => {
+      document.getElementById('saldo').innerHTML = saldo.data.data.saldo;
     });
   };
 
@@ -157,6 +164,7 @@ export default class DetailKeuangan extends Component {
     const status = ["Pengeluaran", "Pemasukkan"];
     const { data } = this.state;
     const { file } = this.state;
+    const { saldo } = this.state;
     const { jumlah } = this.state;
     const { filter } = this.state;
     const { tahun } = this.state;
@@ -368,7 +376,7 @@ export default class DetailKeuangan extends Component {
             </div>
             <div className="form-group col-md-4">
               <h5 style={{}}>Total Penjualan Bulan {filter} Adalah</h5>
-              <h5 style={{ fontWeight: "bold" }}>Rp.{jumlah},00</h5>
+              <h5 style={{ fontWeight: "bold" }}>Rp.<label id="saldo"></label>00</h5>
             </div>
           </div>
           <div className="input-group ">

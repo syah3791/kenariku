@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
 import api from "../utils/ServicesFinance";
+import assets from "../assets/fi.PNG";
 
 const Container = styled.nav`
   .jumbotron {
     /* background-image: url("https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-financial-management-banner-background-design-image_188731.jpg"); */
-    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/000/457/342/original/Finance_Flat_Design_In_Blue._Business_and_Finance_Illustration_in_Doodle_Style._Increasing_Income_and_Money_Management.jpg");
+    background-image: url("fi.PNG");
     background-size: cover;
   }
   .table {
@@ -30,6 +31,7 @@ export default class LaporanKeuangan extends Component {
     keterangan: "",
     data: [],
     file: [],
+    saldo: "",
     idUp: "",
     id: 0,
     message: null,
@@ -46,6 +48,9 @@ export default class LaporanKeuangan extends Component {
         file: report.data.data,
         isLoading: false
       });
+    });
+    await api.getSaldo().then(saldo => {
+      document.getElementById('saldo').innerHTML = saldo.data.data.saldo;
     });
     await api.getAllBirds().then(bird => {
       console.log(bird);
@@ -73,6 +78,9 @@ export default class LaporanKeuangan extends Component {
       this.setState({
         data: bird.data.data
       });
+    });
+    api.getSaldo().then(saldo => {
+      document.getElementById('saldo').innerHTML = saldo.data.data.saldo;
     });
   };
 
@@ -165,6 +173,7 @@ export default class LaporanKeuangan extends Component {
     await api.insertFinanceOut(payload).then(res => {
       window.alert(`Report inserted successfully`);
       this.getReportFromDb();
+      this.getDataFromDb();
     });
     //registerburung(burungData);
   };
@@ -483,7 +492,7 @@ export default class LaporanKeuangan extends Component {
             </div>
             <div className="form-group col-md-4">
               <h5 style={{}}>Total Pendapatan Bulan {filter} Adalah</h5>
-              <h5 style={{ fontWeight: "bold" }}>Rp.{jumlah},00</h5>
+              <h5 style={{ fontWeight: "bold" }}>Rp.<label id="saldo"></label>,00</h5>
             </div>
           </div>
           <div className="input-group ">

@@ -3,10 +3,12 @@ import { withRouter, Link } from "react-router-dom";
 import styled from "styled-components";
 import api from '../utils/ServicesBurung';
 import api2 from "../utils/ServicesBreeding";
+import assets from "../assets/f.png";
 
 const Container = styled.nav`
   .jumbotron {
-    background-image: url("https://i.pinimg.com/originals/6b/20/16/6b201623685e7093fe7df8970b1d26b5.jpg");
+    /* background-image: url("https://i.pinimg.com/originals/6b/20/16/6b201623685e7093fe7df8970b1d26b5.jpg"); */
+    background-image:url("f.png");
     background-size: cover;
   }
   .table {
@@ -72,6 +74,10 @@ const Container = styled.nav`
     text-transform: capitalize;
     opacity: 0.5;
   }
+  .card-counter{
+  background-color:gold;
+  }
+ 
 `;
 export default class FarmManagement extends Component {
   state = {
@@ -164,11 +170,26 @@ export default class FarmManagement extends Component {
     document.getElementById("jual").innerHTML = t;
   };
 
+  onChangeCheck({ target }) {
+    api.getBirdByName(target.value).then(bird => {
+      if (!bird.data.success) {
+        this.setState({
+          [target.name]: target.value
+        });
+        document.getElementById('labelName').innerHTML = 'ID burung dapat digunakan';
+      }else{
+        this.setState({
+          [target.name]: ''
+        });
+        document.getElementById('labelName').innerHTML = 'ID burung sudah digunakan';
+      }
+    });   
+  }
+
   onChange({ target }) {
     this.setState({
       [target.name]: target.value
-    });
-    
+    });    
   }
 
   searchBird({ target }) {
@@ -509,10 +530,12 @@ export default class FarmManagement extends Component {
                             <input
                               type="text"
                               name="name"
+                              id="name"
                               className="form-control"
-                              onChange={e => this.onChange(e)}
+                              onChange={e => this.onChangeCheck(e)}
                               required
                             ></input>
+                            <label id="labelName"></label>
                           </div>
                           <div className="form-group col-md-6">
                             <label for="inputCity">Jenis Kenari </label>
@@ -675,8 +698,8 @@ export default class FarmManagement extends Component {
         <div>
           <div className="container">
           <div class="row" style={{justifyContent:"center"}}>
-    <div class="col-md-3">
-      <div class="card-counter primary">
+    <div   class="col-md-3">
+      <div class="card-counter">
         <i class="fa fa-code-fork"></i>
         <span class="count-numbers" id="stock"></span>
         <span class="count-name"> Burung Stock</span>
@@ -685,7 +708,7 @@ export default class FarmManagement extends Component {
 
     <div class="col-md-3">
     
-      <div class="card-counter danger">
+      <div class="card-counter">
         <i class="fa fa-ticket"></i>
         <span class="count-numbers" id="jual"></span>
         <span class="count-name"> Burung Terjual</span>
@@ -693,17 +716,26 @@ export default class FarmManagement extends Component {
     </div>
 
     <div class="col-md-3">
-      <div class="card-counter success">
+      <div class="card-counter">
         <i class="fa fa-database"></i>
         <span class="count-numbers">{data.length}</span>
         <span class="count-name">Jumlah Semua Burung</span>
       </div>
       </div>
       </div>
-            <h2>List Burung Kenari</h2>
+            {/* <h2>List Burung Kenari</h2> */}
            
             <div className="input-group mb-3">
-              <input
+            <i
+                  style={{ position: "relative",bottom:-40,left:20 }}
+                  className="fa fa-key"
+                  aria-hidden="true"
+                ></i>
+
+
+
+              <input style={{orderWidth:1,borderRadius:20,  paddingInlineStart: 30,marginTop:30,paddingTop:10}}
+              
                 type="text"
                 className="form-control"
                 placeholder="Cari burung..."
